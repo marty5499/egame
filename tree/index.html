@@ -1,0 +1,58 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src='decision-tree.js'></script>
+    <script src='decision-tree-wrap.js'></script>
+    <script src='jsonTable.js'></script>
+</head>
+
+<body>
+    <table style='margin:20px'>
+        <td>
+            <h3 style='margin:10px'>歷史數據</h3>
+            <div style='margin:10px' id='jsontable'></div>
+            <br>
+            <h3 style='margin:10px'>測試數據</h3>
+            <div style='margin:10px' id="testItem"></div>
+        </td>
+        <td>
+            <h3 style='margin:10px'>決策樹</h3>
+            <div class="tree" id="displayTree"></div>
+        </td>
+    </table>
+    <script>
+        ((async function() {
+            var testItemCSV = 'sample1.csv';
+
+            var config = {
+                categoryAttr: '錄取情況',
+                ignoredAttributes: ['姓名'],
+                condition: {
+                    "800m跑走": "<=",
+                    "投球命中": ">=",
+                    "課業成績": ">="
+                }
+            };
+
+            var testObj = {
+                "姓名": "令狐沖",
+                "800m跑走": 100,
+                "投球命中": 60,
+                "課業成績": 50
+            };
+
+            var tree = new DecisionTree('displayTree', config);
+            await tree.trainingSet(testItemCSV);
+            var j = new JSONTable('jsontable');
+
+            j.toTable(tree.getJSONData());
+            var result = tree.predict(testObj);
+            testObj[config.categoryAttr] = '<b style="color:red">' + result + '</b>';
+            new JSONTable('testItem').toTable([testObj]);
+        })())
+    </script>
+
+</body>
+
+</html>

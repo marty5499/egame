@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Convert JSON Data to HTML Table</title>
+    <script src='jsonTable.js'></script>
+    <style>
+        table,
+        th,
+        td {
+            border: solid 2px #ddd;
+            border-collapse: collapse;
+            padding: 5px 8px;
+            text-align: center;
+        }
+        
+        th {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='jsontable'></div>
+</body>
+
+<script>
+    // the json data.
+    const data = [{
+        "氣象預報": "陰時多雲",
+        "降雨機率": 46,
+        "有雨關鍵字": "沒有",
+        "傘": "不帶"
+    }, {
+        "氣象預報": "多雲",
+        "降雨機率": 13,
+        "傘": "不帶",
+        "有雨關鍵字": "沒有"
+    }, {
+        "氣象預報": "多雲偶陣雨",
+        "降雨機率": 78,
+        "傘": "帶",
+        "有雨關鍵字": "有"
+    }, {
+        "氣象預報": "雷陣雨",
+        "降雨機率": 92,
+        "傘": "帶",
+        "有雨關鍵字": "有"
+    }, {
+        "氣象預報": "午後雷陣雨",
+        "降雨機率": 85,
+        "傘": "帶",
+        "有雨關鍵字": "有"
+    }, {
+        "氣象預報": "打雷",
+        "降雨機率": 80,
+        "有雨關鍵字": "有",
+        "傘": "不帶"
+    }]
+
+    var j = new JSONTable('jsontable');
+    j.toTable(data);
+</script>
+
+</html>

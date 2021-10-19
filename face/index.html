@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <script src='./lib/jquery-1.11.0.min.js'></script>
+    <script src="./lib/camera.js"></script>
+    <script src="./lib/faceDetect.js"></script>
+    <script src="./lib/decomp.js"></script>
+    <script src="./lib/pathseg.js"></script>
+    <script src="./lib/matter.js"></script>
+    <script src='./waMatter.js'></script>
+    <script src='./app.js'></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div width='800' height='600'>
+        <div id='p' class="meter animate" style='width:100%;z-index:3'>
+            <span style="width: 0%"><span></span></span>
+        </div>
+        <canvas id='c' width=800 height=600></canvas>
+        <div id='m'></div>
+    </div>
+</body>
+<script>
+    var score = 0;
+    ((async function() {
+        var init = false;
+        var lastFaceX, lastFaceY;
+        var updateTime, keepTime, detectTime;
+        var world = createWorld(c);
+        var cam = new Camera(0).setFlip(true);
+        var slingshot = new Slingshot(world, 250, 350, 6, 24);
+        var p = new Progress('p');
+        p.position(c.offsetLeft + 70, c.offsetTop + 20, 600);
+
+        cam.onCanvas('c', function(canvas) {
+            if (!init) {
+                init = true;
+                world.run();
+            }
+            updateTime = new Date().getTime();
+            keepTime = updateTime - detectTime;
+
+            var distance = Math.sqrt(Math.pow(lastFaceX - slingshot.x, 2) +
+                Math.pow(lastFaceY - slingshot.y, 2));
+
+            if (lastFaceY > slingshot.y) {
+                if (keepTime > 200) {
+                    slingshot.fire();
+                } else if (distance < 100) {
+                    slingshot.move(lastFaceX, lastFaceY);
+                }
+            }
+
+            processfn(canvas, function(dets) {
+                var ctx = canvas.getContext('2d');
+                lastFaceX = dets[i][1];
+                lastFaceY = dets[i][0];
+                var radius = dets[i][2] / 2;
+                ctx.beginPath();
+                ctx.arc(lastFaceX, lastFaceY, 10, 0, 2 * Math.PI, false);
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = 'yellow';
+                ctx.stroke();
+                //
+                lastFaceX = canvas.width - lastFaceX; //flip
+                detectTime = new Date().getTime();
+            });
+        });
+
+
+        function createWorld(faceCanvas) {
+            world = new waMatter(m, 800, 600);
+            world.overlay(faceCanvas);
+            world.init();
+
+            var obj1 = world.addRectangle(390, 300, 120, 20, {
+                isStatic: true,
+                render: {
+                    fillStyle: '#fa9acc',
+                    strokeStyle: '#ffffff',
+                    lineWidth: 1
+                }
+            });
+            world.rotate(obj1, 25);
+
+            var obj2 = world.addRectangle(505, 250, 120, 20, {
+                isStatic: true,
+                render: {
+                    fillStyle: '#fa9acc',
+                    strokeStyle: '#ffffff',
+                    lineWidth: 1
+                }
+            });
+            world.rotate(obj2, -25);
+
+            //ground
+            world.addRectangle(400, 600, 800, 20, {
+                isStatic: true,
+                render: {
+                    fillStyle: '#cacaca',
+                    strokeStyle: '#cacaca',
+                    lineWidth: 1
+                }
+            });
+
+            //box
+            world.addSVG('./svg/box.svg', 630, 280, 10, {
+                isStatic: true,
+                render: {
+                    fillStyle: '#56fa78',
+                    strokeStyle: '#56fa78',
+                    lineWidth: 1
+                }
+            }, function(obj) {
+                var c = setInterval(function() {
+                    score = world.count(630, 200, 120, 250);
+                    score = score > 0 ? --score : score;
+                    p.val(score * 33.3);
+                    if (score == 3) {
+                        clearInterval(c);
+                        console.log("game over");
+                    }
+                }, 1000);
+            });
+            return world;
+        }
+
+        function overlay(baseEle, overEle, opacity, zIndex) {
+            baseEle.style.position = 'relative';
+            overEle.style.top = baseEle.offsetTop + 'px';
+            overEle.style.left = baseEle.offsetLeft + 'px';
+            overEle.width = baseEle.width;
+            overEle.height = baseEle.height;
+            overEle.style.opacity = opacity;
+            overEle.style['z-index'] = zIndex;
+        }
+        overlay(c, m, 0.5 /*opacity*/ , 1 /*z-index*/ );
+    })());
+</script>
+
+
+</html>

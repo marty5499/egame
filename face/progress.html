@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <title>Progress Bars</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id='p' class="meter animate" style='width:600px;'>
+        <span style="width: 0%"><span></span></span>
+    </div>
+    <script>
+        class Progress {
+            constructor(id) {
+                this.ele = document.getElementById(id);
+                this.ele.style.position = 'absolute';
+                this.ele.style.width = '600px';
+                this.eleProgress = this.ele.children[0];
+                this.value = 0;
+            }
+
+            position(x, y, width) {
+                this.ele.style.width = width + 'px';
+                this.ele.style.left = x + 'px';
+                this.ele.style.top = y + 'px';
+            }
+
+            val(val) {
+                this.newValue = val;
+                this.startAnimate();
+            }
+
+            startAnimate() {
+                var self = this;
+                var diff = this.value < this.newValue ? 1 : -1;
+                var c = setInterval(function() {
+                    if (parseInt(self.value) == parseInt(self.newValue)) {
+                        clearInterval(c);
+                    } else {
+                        self.value = self.value + diff;
+                        self.eleProgress.style.width = self.value + "%";
+                    }
+                }, 10);
+            }
+        }
+
+        var p = new Progress('p');
+        p.position(100, 100, 800);
+        p.val(50);
+    </script>
+</body>
+
+</html>

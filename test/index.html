@@ -1,0 +1,27 @@
+<html>
+
+<head></head>
+
+<body>
+    偵測攝影機範例程式
+    <script>
+        function checkWebcam(callback) {
+            navigator.getMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia || navigator.msGetUserMedia);
+            navigator.getMedia({
+                video: true
+            }, function(stream) {
+                stream.getTracks().forEach(track => track.stop());
+                callback(true);
+            }, function() {
+                callback(false);
+            });
+        }
+
+        checkWebcam(function(exists) {
+            alert("攝影機：" + (exists ? "支援" : "不支援"));
+        });
+    </script>
+</body>
+
+</html>

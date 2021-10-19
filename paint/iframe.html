@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/paint.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id='waContainer'>
+    <div id='msg' class='result'>0%</div>
+    <canvas id="ui" class="uibox"></canvas>
+    <canvas id="shape" class="shapebox"></canvas>
+    <div id='sec' class='cntDown'></div>
+    <script src="./lib/camera.js"></script>
+    <script src="./lib/lib_paint.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handtrackjs@latest/dist/handtrack.min.js">
+    </script>
+    <script>
+        function fitSize(canvas) {
+            // Make it visually fill the positioned parent
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            // ...then set the internal size to match
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        fitSize(ui);
+        fitSize(shape);
+    </script>
+    <script src="paint.js"></script>
+</body>
+
+</html>

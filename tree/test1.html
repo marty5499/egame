@@ -1,0 +1,56 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src='decision-tree.js'></script>
+    <script src='decision-tree-wrap.js'></script>
+    <script src='jsonTable.js'></script>
+</head>
+
+<body>
+    <table style='margin:20px'>
+        <td>
+            <h3 style='margin:10px'>歷史數據</h3>
+            <div style='margin:10px' id='jsontable'></div>
+            <br>
+            <h3 style='margin:10px'>測試數據</h3>
+            <div style='margin:10px' id="testItem"></div>
+        </td>
+        <td>
+            <h3 style='margin:10px'>決策樹</h3>
+            <div class="tree" id="displayTree"></div>
+        </td>
+    </table>
+    <script>
+        ((async function() {
+            var testItemCSV = 'sample2.csv';
+
+            var config = {
+                categoryAttr: '回答結果',
+                ignoredAttributes: ['氣象預報'],
+                condition: {
+                    "天氣狀況": "==",
+                    "降雨機率": ">="
+                }
+            };
+
+            var testObj = {
+                "氣象預報": "多雲",
+                "天氣狀況": "晴天",
+                "降雨機率": 40
+            };
+
+            var tree = new DecisionTree('displayTree', config);
+            await tree.trainingSet(testItemCSV);
+            var j = new JSONTable('jsontable');
+
+            j.toTable(tree.getJSONData());
+            var result = tree.predict(testObj);
+            testObj[config.categoryAttr] = '<b style="color:red">' + result + '</b>';
+            new JSONTable('testItem').toTable([testObj]);
+        })())
+    </script>
+
+</body>
+
+</html>

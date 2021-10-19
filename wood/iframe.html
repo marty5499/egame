@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/wood.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id='waContainer'>
+    <div id='msg' class='result'>0%</div>
+    <div id='sec' class='cntDown'></div>
+    <canvas id="axe" class="border axebox"></canvas>
+    <canvas id="woods" class="border woodbox"></canvas>
+    <script src="./lib/camera.js"></script>
+    <script src="./lib/lib_wood.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handtrackjs@latest/dist/handtrack.min.js">
+    </script>
+    <script>
+        function fitSize(canvas) {
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        fitSize(axe);
+        fitSize(woods);
+    </script>
+    <script src="wood.js"></script>
+</body>
+
+</html>

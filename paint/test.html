@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id='waContainer'>
+    <script src="./lib/camera.js"></script>
+    <script>
+        var c1 = document.createElement('canvas');
+        c1.id = 'camera';
+        c1.style.opacity = 0.3;
+        var waContainer = document.getElementById("waContainer");
+        waContainer.appendChild(c1);
+        cam = new Camera(0);
+        cam.setCanvas(c1);
+        cam.setFitToContainer(true);
+        cam.onCanvas(function(c) {
+
+
+        });
+    </script>
+</body>
+
+</html>

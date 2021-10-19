@@ -1,0 +1,91 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="game.css">
+    <style>
+        button {
+            font-size: 1.5em;
+        }
+        
+        #eventMsg {
+            width: 200px;
+            height: 300px;
+            overflow: auto;
+            border: #3C7D91 1px double;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="js:loadIframe('rocket')">飛向太空</button>
+    <button onclick="js:loadIframe('money')">快接金幣</button>
+    <button onclick="js:loadIframe('mouse')">電流急鼠</button>
+    <button onclick="js:loadIframe('paint')">塗鴉比賽</button>
+    <button onclick="js:loadIframe('wood')">手刀鋸木</button>
+    <button onclick="js:loadIframe('face')">人臉能量棒</button>
+    <button onclick="js:loadIframe('tree')">決策樹</button>
+    <button onclick="js:loadIframe('knn')">KNN</button>
+    <br>
+    <br>
+    <button onclick="js:setIframe(800,600)">800x600</button>
+    <button onclick="js:setIframe(640,480)">640x480</button>
+    <br>
+    <br>
+    <button onclick="js:gameStart()">遊戲開始</button>
+    <br>
+    <br> 事件觸發：
+    <div id='eventMsg'></div>
+    <div id="mydiv">
+        <div id="mydivheader">move iframe</div>
+        <iframe id='iframe' style='width:640px;height:480px;border: none;'></iframe>
+    </div>
+</body>
+<script src='game.js'></script>
+<script>
+    function loadIframe(game) {
+        location.hash = game;
+        iframe.src = "./" + game + "/iframe.html";
+        eventMsg.innerHTML = '';
+    }
+
+    function setIframe(w, h) {
+        console.log("set", w, h);
+        iframe.style.width = w + "px";
+        iframe.style.height = h + "px";
+        iframe.src = iframe.src;
+        eventMsg.innerHTML = '';
+    }
+
+    function createGame() {
+        iframe.contentWindow._waGame_.callback(function(evt) {
+            msg = '事件：' + JSON.stringify(evt);
+            console.log("msg", msg);
+            writeLog(msg);
+        });
+        //關卡參數
+        var gameArgs = {
+            "level": 'easy', // easy , normal , hard
+        };
+        //*/啟動遊戲，等遊戲初始化完成後，顯示遊戲開始
+        iframe.contentWindow._waGame_.init(gameArgs, function(game) {
+            alert("遊戲開始");
+            game.start();
+        });
+    }
+
+    function writeLog(msg) {
+        var log = eventMsg.innerHTML + msg;
+        eventMsg.innerHTML = log + '<br>';
+    }
+
+    var url = location.hash;
+    if (url.length > 0) {
+        url = "./" + url.substring(1) + "/iframe.html";
+        iframe.onload = function() {
+            createGame();
+        };
+        iframe.src = url;
+    }
+</script>
+
+</html>

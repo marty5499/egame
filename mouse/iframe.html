@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Web:Bit</title>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-62202920-13"></script>
+    <script src="./js/blockly/dist/google-gtag.min.js"></script>
+    <link rel="stylesheet" href="./css/blockly/components/jquery-ui/themes/base/jquery-ui.min.css">
+    <script src="./js/blockly/components/jquery/dist/jquery.min.js"></script>
+    <script src="./js/blockly/dist/lib/webduino-all.min.js"></script>
+    <script src="./js/blockly/dist/webduino-js-plugin/BitIRled.min.js"></script>
+    <script src="./js/blockly/dist/webduino-js-plugin/BitIRRecv.min.js"></script>
+    <script src="./js/blockly/dist/edu.min.js"></script>
+    <script src="./js/blockly/dist/edu-mpu9250.min.js"></script>
+    <script src="./js/blockly/dist/edu-blockly.min.js"></script>
+    <script src="./js/blockly/dist/MessageTransport.min.js"></script>
+    <script src="./js/blockly/dist/webduino-blockly.min.js"></script>
+    <script src="./js/blockly/dist/lib/firebase.min.js"></script>
+    <script src="./js/blockly/dist/lib/runtime.min.js"></script>
+    <link rel="stylesheet" href="./css/blockly/dist/css/main.css">
+    <script src="./js/webduino-module-pixi/pixi5.min.js"></script>
+    <script src="./js/webduino-module-pixi/pixi-library.js"></script>
+    <script src="./js/webduino-module-handsDetect/camera.js"></script>
+    <script src="./js/webduino-module-handsDetect/tfjs@latest.min.js"></script>
+    <script src="./js/webduino-module-handsDetect/handtrack.min.js"></script>
+    <script src="./js/webduino-module-handsDetect/HandsDetect.js"></script>
+    <script src="./js/webduino-module-handsDetect/hands-blockly.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id='waContainer'>
+    <div id="userHtml"></div>
+    <span id="reset">↻</span>
+    <div id="youtube-container">
+        <div id="player"></div>
+    </div>
+    <div id="recordingArea">
+        <svg version="1.1" id="mic_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 21 23" width="26px" height="36px" xml:space="preserve">
+            <path id="mic" d="M5,10.8V4.6C5,2.1,7,0,9.5,0c2.5,0,4.6,2.1,4.6,4.6v6.3c0,2.5-2.1,4.6-4.6,4.6C7,15.4,5,13.3,5,10.8z M17.3,10.4
+   c0-0.4-0.3-0.8-0.8-0.8s-0.8,0.3-0.8,0.8c0,3.4-2.8,6.2-6.2,6.2s-6.2-2.8-6.2-6.2C3.3,10,3,9.7,2.5,9.7S1.8,10,1.8,10.4
+   c0,4,3.1,7.3,7,7.7v1.7H5.4c-0.4,0-0.8,0.3-0.8,0.8s0.3,0.8,0.8,0.8h8.2c0.4,0,0.8-0.3,0.8-0.8s-0.3-0.8-0.8-0.8h-3.4v-1.7
+   C14.2,17.7,17.3,14.4,17.3,10.4z"></path>
+            <g id="mic_stop">
+                <path class="st1" d="M2,20.3c-0.2,0-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.3L17.7,2.3c0.4-0.4,1-0.4,1.3,0c0.4,0.4,0.4,1,0,1.3L2.6,20
+     C2.4,20.2,2.2,20.3,2,20.3z"></path>
+                <path class="st2" d="M18.3,2c0.2,0,0.5,0.1,0.7,0.3c0.4,0.4,0.4,1,0,1.3L2.6,20c-0.2,0.2-0.4,0.3-0.7,0.3c-0.2,0-0.5-0.1-0.7-0.3
+     c-0.4-0.4-0.4-1,0-1.3L17.7,2.3C17.8,2.1,18.1,2,18.3,2 M18.3,1c-0.5,0-1,0.2-1.4,0.6L0.6,17.9C0.2,18.3,0,18.8,0,19.3
+     s0.2,1,0.6,1.4c0.4,0.4,0.9,0.6,1.4,0.6c0.5,0,1-0.2,1.4-0.6L19.7,4.3C20.1,4,20.3,3.5,20.3,3s-0.2-1-0.6-1.4
+     C19.3,1.2,18.8,1,18.3,1L18.3,1z"></path>
+            </g>
+        </svg>
+    </div>
+    <div id="demoMonster01" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+    <div id="demoMonster02" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+    <div id="demoMonster03" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+    <div id="demoMonster04" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+
+    <script src="./js/blockly/dist/template/main.min.js"></script>
+    <script src="./main.js"></script>
+
+</body>
+
+</html>

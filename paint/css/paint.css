@@ -1,0 +1,26 @@
+.result {
+    position: absolute;
+    top: 0%;
+    left: 3%;
+    font-size: 4em;
+    z-index: 3;
+}
+
+.cntDown {
+    position: absolute;
+    z-index: 3;
+    font-size: 4em;
+    top: 2%;
+    right: 2%;
+}
+
+.uibox {
+    opacity: 0.3;
+    z-index: 2;
+    position: absolute;
+}
+
+.shapebox {
+    z-index: 1;
+    position: absolute;
+}

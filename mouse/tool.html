@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tools</title>
+</head>
+
+<body>
+    <canvas id="view"></canvas>
+    <div id='len'>Data:0</div>
+    <div id='stoke'>Stroke:</div>
+    <div><textarea id='data'></textarea></div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js'></script>
+    <script>
+        function getDistance(x1, y1, x2, y2) {
+            var dx = x1 - x2;
+            var dy = y1 - y2;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        document.addEventListener('click', function() {
+            console.log("cick");
+            if (!start) {
+                start = true;
+                console.log("start...");
+            } else {
+                start = false;
+                data.value = JSON.stringify(drawArray);
+            }
+        });
+        document.addEventListener('keyup', function(e) {
+            if (e.key == 'q') {
+                strokeVal -= 5;
+            }
+            if (e.key == 'w') {
+                strokeVal += 5;
+            }
+            stoke.innerHTML = 'Stroke:' + strokeVal;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (start) {
+                var pageX = e.pageX;
+                var pageY = e.pageY;
+                var d = getDistance(pageX, pageY, lastMoveX, lastMoveY);
+                if (d > strokeVal) {
+                    drawArray.push(pageX, pageY, strokeVal);
+                    g.drawCircle(pageX, pageY, strokeVal);
+                    lastMoveX = pageX;
+                    lastMoveY = pageY;
+                    len.innerHTML = "Data:" + drawArray.length;
+                }
+            }
+        });
+        var lastMoveX = 0;
+        var lastMoveY = 0;
+        var app = new PIXI.Application({
+            width: 640,
+            height: 480,
+            backgroundColor: 0x4c3e50,
+            view: view
+        });
+        var start = false;
+        var strokeVal = 30;
+        var drawArray = [];
+        var g = new PIXI.Graphics();
+        g.beginFill(0xe7ec3c); // Red
+        app.stage.addChild(g);
+        app.loader.load(function() {
+            stoke.innerHTML = 'Stroke:' + strokeVal;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <script src='./lib/jquery-1.11.0.min.js'></script>
+    <script src="./lib/camera.js"></script>
+    <script src="./lib/faceDetect.js"></script>
+    <script src="./lib/decomp.js"></script>
+    <script src="./lib/pathseg.js"></script>
+    <script src="./lib/matter.js"></script>
+    <script src='./waMatter.js'></script>
+    <script src='./app.js'></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id='waContainer'>
+    <div id='p' class="meter animate" style='width:100%;z-index:3'>
+        <span style="width: 0%"><span></span></span>
+    </div>
+    <div id='sec' class='cntDown'></div>
+    <div id='m'></div>
+</body>
+<script src='main.js'></script>
+
+
+</html>

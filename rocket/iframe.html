@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Game</title>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-62202920-14"></script>
+    <script src="./js/webbit/dist/google-gtag.min.js"></script>
+    <link rel="stylesheet" href="./css/webbit/components/jquery-ui/themes/base/jquery-ui.min.css">
+    <script src="./js/webbit/components/jquery/dist/jquery.min.js"></script>
+    <script src="./js/webbit/dist/lib/webduino-all.min.js"></script>
+    <script src="./js/webbit/dist/webduino-js-plugin/BitIRled.min.js"></script>
+    <script src="./js/webbit/dist/webduino-js-plugin/BitIRRecv.min.js"></script>
+    <script src="./js/webbit/dist/edu.min.js"></script>
+    <script src="./js/webbit/dist/edu-mpu9250.min.js"></script>
+    <script src="./js/webbit/dist/edu-blockly.min.js"></script>
+    <script src="./js/webbit/dist/MessageTransport.min.js"></script>
+    <script src="./js/webbit/dist/webduino-blockly.min.js"></script>
+    <script src="./js/webbit/dist/lib/firebase.min.js"></script>
+    <script src="./js/webbit/dist/lib/runtime.min.js"></script>
+    <link rel="stylesheet" href="./css/webbit/dist/css/main.css">
+    <link rel="stylesheet" href="./css/webbit/dist/css/english.css">
+    <script src="./js/webduino-module-videoSensor/adapter.js"></script>
+    <script src="./js/webduino-module-videoSensor/webRTC.js"></script>
+    <script src="./js/camera.js"></script>
+    <script src="./js/webduino-module-videoSensor/opencv.js"></script>
+    <script src="./js/webduino-module-videoSensor/imageFilter.js"></script>
+    <script src="./js/webduino-module-videoSensor/actor.js"></script>
+    <script src="./js/webduino-module-videoSensor/HotSpot.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body id='waContainer'>
+    <div id="userHtml"></div>
+    <span id="reset">↻</span>
+
+    <!-- 小怪獸互動區 -->
+    <div id="inputArea">
+        <input id="input" autocomplete="off" autofocus=""><span id="send">✔</span>
+    </div>
+    <div id="demoMonster01" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+    <div id="demoMonster02" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+    <div id="demoMonster03" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+    <div id="demoMonster04" class="monster">
+        <span class="talk"></span>
+        <div class="m-img" attr-emotion="0"></div>
+    </div>
+
+    <script src="./js/webbit/dist/template/main.min.js"></script>
+    <script src="./js/webduino-module-videoSensor/waspot-blockly.js"></script>
+    <script src="./main.js"></script>
+    <script>
+        _waGame_.callback(function(evt) {
+            //被隕石擊中
+            if (evt.name == 'collision') {
+                console.log("碰撞次數:" + evt.amt);
+            }
+            //遊戲結束，過關或失敗
+            if (evt.name == 'over') {
+                console.log("遊戲結束");
+                if (evt.amt <= 3) console.log("過關");
+                if (evt.amt > 3) console.log("失敗");
+            }
+        });
+    </script>
+</body>
+
+</html>

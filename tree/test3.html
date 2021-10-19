@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src='decision-tree.js'></script>
+    <script src='decision-tree-wrap.js'></script>
+    <script src='jsonTable.js'></script>
+</head>
+
+<body>
+    <h3 style='margin:10px'>歷史數據</h3>
+    <div style='margin:10px' id='jsontable'></div>
+    <h3 style='margin:10px'>測試數據</h3>
+    <div style='margin:10px' id="testItem"></div>
+    <h3 style='margin:10px'>決策樹</h3>
+    <div class="tree" id="displayTree"></div>
+
+    <script>
+        ((async function() {
+            var tree = new DecisionTree('displayTree', {
+                categoryAttr: '傘',
+                ignoredAttributes: ['氣象預報']
+            });
+
+            var testObj = {
+                "氣象預報": "午後有雷",
+                "有雨關鍵字": "有",
+                "降雨機率": 88,
+                "備註": ""
+            };
+            await tree.trainingSet('data1.json');
+
+            new JSONTable('testItem').toTable([testObj]);
+            var decisionTreePrediction = tree.predict(testObj);
+        })())
+    </script>
+
+</body>
+
+</html>

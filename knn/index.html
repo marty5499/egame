@@ -1,0 +1,183 @@
+<html>
+
+<head>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        
+        .up {
+            width: 50px;
+            height: 30px;
+            color: black;
+            background-color: '#eefefe'
+        }
+        
+        .down {
+            width: 50px;
+            height: 30px;
+            color: aliceblue;
+            background-color: #555555;
+        }
+        
+        p {
+            font-family: monospace;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id='c' width='500' height='500'></canvas>
+    <canvas id='d' style='position:absolute;left:8px' width='500' height='500'></canvas>
+    <br><br>
+    <button id='k1' class='up' onclick='setK(this,1)'>k=1</button>
+    <button id='k2' class='up' onclick='setK(this,2)'>k=2</button>
+    <button id='k3' class='up' onclick='setK(this,3)'>k=3</button>
+    <button id='k4' class='up' onclick='setK(this,4)'>k=4</button>
+    <button id='k5' class='up' onclick='setK(this,5)'>k=5</button>
+    <button id='k6' class='up' onclick='setK(this,6)'>k=6</button>
+    <button id='k7' class='up' onclick='setK(this,7)'>k=7</button>
+    <button id='k8' class='up' onclick='setK(this,8)'>k=8</button>
+    <button id='k9' class='up' onclick='setK(this,9)'>k=9</button>
+    <br><br>
+    <button id='d1' class='up' onclick='setD(this,1)'>d=1</button>
+    <button id='d2' class='up' onclick='setD(this,2)'>d=2</button>
+    <button id='d3' class='up' onclick='setD(this,3)'>d=3</button>
+    <button id='d4' class='up' onclick='setD(this,4)'>d=4</button>
+    <button id='d5' class='up' onclick='setD(this,5)'>d=5</button>
+    <button id='d6' class='up' onclick='setD(this,6)'>d=6</button>
+    <button id='d7' class='up' onclick='setD(this,7)'>d=7</button>
+    <button id='d8' class='up' onclick='setD(this,8)'>d=8</button>
+    <button id='d9' class='up' onclick='setD(this,9)'>d=9</button>
+    <br><br>
+    <button id='c1' class='up' onclick='setC(this,1)'>c=1</button>
+    <button id='c2' class='up' onclick='setC(this,2)'>c=2</button>
+    <button id='c3' class='up' onclick='setC(this,3)'>c=3</button>
+    <button id='c4' class='up' onclick='setC(this,4)'>c=4</button>
+    <button id='c5' class='up' onclick='setC(this,5)'>c=5</button>
+    <button id='c6' class='up' onclick='setC(this,6)'>c=6</button>
+    <button id='c7' class='up' onclick='setC(this,7)'>c=7</button>
+    <button id='c8' class='up' onclick='setC(this,8)'>c=8</button>
+    <button id='c9' class='up' onclick='setC(this,9)'>c=9</button>
+    <br>
+    <p id='text'>
+
+    </p>
+
+    <script src='kdTree.js'></script>
+    <script src='knn.js'></script>
+    <script src='drag.js'></script>
+
+    <script>
+        var points = [{
+            x: 1,
+            y: 1
+        }, {
+            x: 2,
+            y: 1
+        }, {
+            x: 1,
+            y: 0.5
+        }, {
+            x: 6,
+            y: 5
+        }, {
+            x: 5,
+            y: 6
+        }, {
+            x: 6,
+            y: 6
+        }, {
+            x: 7,
+            y: 7
+        }, {
+            x: 1,
+            y: 8
+        }, {
+            x: 1.5,
+            y: 8
+        }, {
+            x: 7,
+            y: 1
+        }, {
+            x: 7.5,
+            y: 1
+        }, {
+            x: 7,
+            y: 1.5
+        }];
+
+        points = [{
+            x: 1,
+            y: 1,
+            color: '#6f3ff0'
+        }, {
+            x: 2,
+            y: 1,
+            color: '#6f3ff0'
+        }, {
+            x: 2,
+            y: 2,
+            color: '#6f3ff0'
+        }, {
+            x: 1,
+            y: 8
+        }, {
+            x: 2,
+            y: 9
+        }, {
+            x: 7,
+            y: 1
+        }, {
+            x: 8,
+            y: 1
+        }, {
+            x: 7,
+            y: 2
+        }];
+
+        var d = document.getElementById('d');
+        var drag = new Drag(d, zoom = 50);
+        drag.setBackgroundImage(
+            "https://images.chinatimes.com/newsphoto/2019-10-26/900/20191026002589.jpg", 0.6);
+
+        function add(points) {
+            for (var i = 0; i < points.length; i++) {
+                drag.addCircle(points[i]);
+            }
+        }
+
+        function setK(src, k) {
+            attr(src, 'k');
+            drag.setKVal(k);
+        }
+
+        function setD(src, d) {
+            attr(src, 'd');
+            drag.setDVal(d);
+        }
+
+        function setC(src, c) {
+            attr(src, 'c');
+            drag.clustering(c);
+        }
+
+        function attr(src, attr) {
+            for (var i = 1; i < 10; i++) {
+                var ele = document.getElementById(attr + i);
+                try {
+                    ele.classList.remove("down");
+                } catch (e) {}
+            }
+            src.classList.add("down");
+        }
+
+        add(points);
+        k2.click();
+        d2.click();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src='decision-tree.js'></script>
+</head>
+
+<body>
+    <b>天氣預報</b>
+    <div id="testingItem"></div>
+    <br />
+    <b>決策樹預測:</b>
+    <div id="decisionTreePrediction"></div>
+    <br />
+    <br />
+    <b>決策樹</b>
+    <br />
+    <div class="tree" id="displayTree"></div>
+
+    <script>
+        class DecisionTree {
+
+            constructor(config) {
+                this.config = config;
+                this.numberOfTrees = 6;
+                this.serial = 0;
+            }
+
+            async trainingSet(jsonFile) {
+                let response = await fetch(`./${jsonFile}`);
+                this.config.trainingSet = await response.json();
+                this.analysis();
+            }
+
+            analysis() {
+                this.decisionTree = new dt.DecisionTree(this.config);
+                this.randomForest = new dt.RandomForest(this.config, this.numberOfTrees);
+                this.root = this.decisionTree.root;
+            }
+
+            predict(obj) {
+                var result = this.decisionTree.predict(obj);
+                document.getElementById('displayTree').innerHTML = this.treeToHtml(this.root);
+                for (let key in obj) {
+                    this.paint(key, obj[key]);
+                }
+                return result;
+            }
+
+            paint(keyword, val) {
+                var keys = document.getElementsByName(keyword);
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    //key.style['background-color'] = '#ffbbcc';
+                    var data = key.parentNode.children[0].getAttribute('pivot');
+                    var node;
+                    if (data == val) {
+                        node = key.parentNode.children[1].children[0].children[0];
+                    } else {
+                        node = key.parentNode.children[1].children[1].children[0];
+                    }
+                    var parentNode = node.parentNode.parentElement.previousElementSibling;
+                    // console.log(">>", parentNode);
+                    //node.style['background-color'] = '#ffdd99';
+                }
+            }
+
+            treeToHtml(tree) {
+                var yes, no, attr;
+                console.log('attr:', tree.attr, ' , mark:', tree.mark);
+                if (tree.mark) {
+                    yes = 'mark';
+                    no = ''
+                } else {
+                    yes = ''
+                    no = 'mark'
+                };
+                attr = typeof tree.attr == 'string' ? 'mark' : '';
+                if (tree.category) {
+                    return ['<ul>',
+                        '<li>',
+                        '<a href="#" class="' + attr + '">',
+                        '<b>', tree.category, '</b>',
+                        '</a>',
+                        '</li>',
+                        '</ul>'
+                    ].join('');
+                }
+
+                return ['<ul>',
+                    '<li>',
+                    '<a href="#" class="' + attr + '" name="' + tree.attribute + '" pivot="' + tree.pivot + '">',
+                    '<b>', tree.attribute, ' ', tree.predicateName, ' ', tree.pivot, ' ?</b>',
+                    '</a>',
+                    '<ul>',
+                    '<li>',
+                    '<a href="#" class="' + yes + '">yes</a>',
+                    this.treeToHtml(tree.match),
+                    '</li>',
+                    '<li>',
+                    '<a href="#" class="' + no + '">no</a>',
+                    this.treeToHtml(tree.notMatch),
+                    '</li>',
+                    '</ul>',
+                    '</li>',
+                    '</ul>'
+                ].join('');
+            }
+
+        }
+
+
+        ((async function() {
+            var tree = new DecisionTree({
+                categoryAttr: '傘',
+                ignoredAttributes: ['氣象預報']
+            });
+
+            await tree.trainingSet('data1.json');
+            var obj = {
+                "氣象預報": "午後有雷",
+                "有雨關鍵字": "有",
+                "降雨機率": 34,
+                "備註": ""
+            };
+            var decisionTreePrediction = tree.predict(obj);
+            //console.log(decisionTreePrediction);
+            document.getElementById('testingItem').innerHTML = JSON.stringify(obj, null, 0);
+            document.getElementById('decisionTreePrediction').innerHTML = decisionTreePrediction[0];
+            console.log(decisionTreePrediction[1]);
+            window.tree = tree;
+        })())
+    </script>
+
+</body>
+
+</html>
