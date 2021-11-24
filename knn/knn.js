@@ -25,7 +25,7 @@ class KNN {
   /**
    * 設定背影圖片
    * @param {string} url - 背景圖片網址 https://......
-   * @param {string} author - 背景圖片透明度 0(不透明)～1(完全透明)
+   * @param {string} alpha - 背景圖片透明度 0(不透明)～1(完全透明)
    */
   setBackgroundImage(url, alpha) {
     this.background.src = url;

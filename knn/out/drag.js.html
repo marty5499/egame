@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: drag.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: drag.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * drag.js
  * @param {eleCanvas} canvas ID
  * @param {zoom} 座標之間的間距
@@ -83,14 +111,14 @@ class Drag {
   showNearest(circle, x, y) {
     this.resetCircleColor();
     var data = this.knn.nearest.call(this.knn, x, y, this.k, this.d);
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i &lt; data.length; i++) {
       data[i][0].color = this.getNestColor();
     }
     circle.color = this.getMoveColor();
   }
 
   resetCircleColor() {
-    for (var i = 0; i < this.circles.length; i++) {
+    for (var i = 0; i &lt; this.circles.length; i++) {
       var color = this.circles[i].defColor == null ? this.getColor() : this.circles[i].defColor;
       this.circles[i].color = color;
 
@@ -102,7 +130,7 @@ class Drag {
     this.tiers = [];
     this.circles = [];
     this.setKnn();
-    for (var i = 0; i < saveCircles.length; i++) {
+    for (var i = 0; i &lt; saveCircles.length; i++) {
       this.addCircle({
         x: saveCircles[i].kx,
         y: saveCircles[i].ky
@@ -142,7 +170,7 @@ class Drag {
 
   clustering(tier) {
     var save = this.clone(this.circles);
-    for (var i = 1; i <= tier; i++) {
+    for (var i = 1; i &lt;= tier; i++) {
       this.tiers[i] = [];
       console.log("-----", i, "-----");
       while (this.process(i, this.circles));
@@ -151,7 +179,7 @@ class Drag {
     console.log(saveTier);
     this.restart(save);
     this.ctx.setLineDash([]);
-    for (var draw = 0; draw < saveTier[tier].length; draw++) {
+    for (var draw = 0; draw &lt; saveTier[tier].length; draw++) {
       var circle = saveTier[tier][draw];
       this.drawCircle(circle);
     }
@@ -162,14 +190,14 @@ class Drag {
     var minP2 = null;
     var distance = Infinity;
     var maxDistance = 0;
-    for (var i = 0; i < points.length; i++) {
+    for (var i = 0; i &lt; points.length; i++) {
       var p1 = points[i];
       var p1p2 = this.knn.getNearest(p1);
       if (p1p2[2] == 0) return false;
       if (p1p2[2] > maxDistance) {
         maxDistance = p1p2[2];
       }
-      if (p1p2[2] < distance) {
+      if (p1p2[2] &lt; distance) {
         if (p1.tier == tier || p1p2[1].tier == tier) continue;
         minP1 = p1;
         minP2 = p1p2[1];
@@ -181,7 +209,7 @@ class Drag {
       }
     }
     if (minP1 == null) return false;
-    var p1 = '(' + minP1.tier + ')[' + minP1.kx + ',' + minP1.ky + ']<->';
+    var p1 = '(' + minP1.tier + ')[' + minP1.kx + ',' + minP1.ky + ']&lt;->';
     var p2 = '(' + minP2.tier + ')[' + minP2.kx + ',' + minP2.ky + '] ,distance:' +
       parseInt(distance * 100) / 100.0;
     //console.log(p1 + p2);
@@ -214,7 +242,7 @@ class Drag {
     this.knn.remove(obj);
     this.knn.insert(obj);
     var empty = true;
-    for (var i = 0; i < this.circles.length; i++) {
+    for (var i = 0; i &lt; this.circles.length; i++) {
       if (obj == this.circles[i]) empty = false;
     }
     if (empty) {
@@ -249,7 +277,8 @@ class Drag {
     var ctx = this.ctx;
     ctx.font = "16px Arial";
     ctx.clearRect(0, 0, this.cw, this.ch);
-    for (var i = 0; i < this.circles.length; i++) {
+    //ctx.drawImage(this.background, 0, 0);
+    for (var i = 0; i &lt; this.circles.length; i++) {
       var circle = this.circles[i];
       var x = Math.round(this.rate * circle.x) / this.rate;
       var y = Math.round(this.rate * circle.y) / this.rate;
@@ -258,8 +287,7 @@ class Drag {
       ctx.arc(x, y, circle.radius, 0, this.PI2);
       ctx.fill();
       ctx.closePath();
-      ctx.drawImage(dotImg, x+3,y+3,32,32);
-      if (this.isDown && this.draggingCircle == circle) {
+      if (this.isDown &amp;&amp; this.draggingCircle == circle) {
         ctx.globalAlpha = 0.1;
         ctx.beginPath();
         ctx.setLineDash([5, 15]);
@@ -284,11 +312,11 @@ class Drag {
     this.lastY = parseInt(e.clientY - this.offsetY);
     // hit test all existing circles
     var hit = -1;
-    for (var i = 0; i < this.circles.length; i++) {
+    for (var i = 0; i &lt; this.circles.length; i++) {
       var circle = this.circles[i];
       var dx = this.lastX - circle.x;
       var dy = this.lastY - circle.y;
-      if (dx * dx + dy * dy < circle.radius * circle.radius) {
+      if (dx * dx + dy * dy &lt; circle.radius * circle.radius) {
         hit = i;
         circle.color = this.getMoveColor();
         this.knn.remove(circle);
@@ -298,7 +326,7 @@ class Drag {
     }
     // if no hits then add a circle
     // if hit then set the isDown flag to start a drag
-    if (hit < 0) {
+    if (hit &lt; 0) {
       var newDot = {
         x: this.lastX / this.zoom,
         y: this.lastY / this.zoom,
@@ -367,4 +395,26 @@ class Drag {
   getMergeColor() {
     return ('#1133fa');
   }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Drag.html">Drag</a></li><li><a href="KNN.html">KNN</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Nov 24 2021 09:33:24 GMT+0800 (台北標準時間)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
