@@ -255,10 +255,10 @@ class Drag {
       var y = Math.round(this.rate * circle.y) / this.rate;
       ctx.beginPath();
       ctx.fillStyle = circle.color;
-      ctx.arc(x, y, circle.radius, 0, this.PI2);
+      ctx.arc(x, y, circle.radius*2, 0, this.PI2);
       ctx.fill();
       ctx.closePath();
-      ctx.drawImage(dotImg, x+3,y+3,32,32);
+      ctx.drawImage(dotImg, x-16,y,32,32);
       if (this.isDown && this.draggingCircle == circle) {
         ctx.globalAlpha = 0.1;
         ctx.beginPath();
