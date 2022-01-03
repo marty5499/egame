@@ -51,24 +51,13 @@
     <button id='d7' class='up' onclick='setD(this,7)'>d=7</button>
     <button id='d8' class='up' onclick='setD(this,8)'>d=8</button>
     <button id='d9' class='up' onclick='setD(this,9)'>d=9</button>
-    <br><br>
-    <button id='c1' class='up' onclick='setC(this,1)'>c=1</button>
-    <button id='c2' class='up' onclick='setC(this,2)'>c=2</button>
-    <button id='c3' class='up' onclick='setC(this,3)'>c=3</button>
-    <button id='c4' class='up' onclick='setC(this,4)'>c=4</button>
-    <button id='c5' class='up' onclick='setC(this,5)'>c=5</button>
-    <button id='c6' class='up' onclick='setC(this,6)'>c=6</button>
-    <button id='c7' class='up' onclick='setC(this,7)'>c=7</button>
-    <button id='c8' class='up' onclick='setC(this,8)'>c=8</button>
-    <button id='c9' class='up' onclick='setC(this,9)'>c=9</button>
-    <br>
     <p id='text'>
 
     </p>
 
     <script src='kdTree.js'></script>
     <script src='knn.js'></script>
-    <script src='drag.js'></script>
+    <script src='gameUI.js'></script>
 
 <img id="dotImg" src="https://images.996pic.com/d93d840d1d494d42a16f46837e65c94f680_680.jpg" width="32" height="32">
 
@@ -141,29 +130,24 @@
         }];
 
         var d = document.getElementById('d');
-        var drag = new Drag(d, zoom = 50);
-        drag.setBackgroundImage(
+        var gameUI = new GameUI(d, zoom = 50);
+        gameUI.setBackgroundImage(
             "https://images.chinatimes.com/newsphoto/2019-10-26/900/20191026002589.jpg", 0.6);
 
         function add(points) {
             for (var i = 0; i < points.length; i++) {
-                drag.addCircle(points[i]);
+                gameUI.addCircle(points[i]);
             }
         }
 
         function setK(src, k) {
             attr(src, 'k');
-            drag.setKVal(k);
+            gameUI.setKVal(k);
         }
 
         function setD(src, d) {
             attr(src, 'd');
-            drag.setDVal(d);
-        }
-
-        function setC(src, c) {
-            attr(src, 'c');
-            drag.clustering(c);
+            gameUI.setDVal(d);
         }
 
         function attr(src, attr) {
