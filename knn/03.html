@@ -1,0 +1,31 @@
+<html>
+
+<body style='background-color: black;'>
+    <script src='kdTree.js'></script>
+    <script src='knn.js'></script>
+    <script src='gameUI.js'></script>
+    <canvas id='myCanvas' width='500' height='500'></canvas>
+    <script>
+        (async function () {
+            var imgURL = 'https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg';
+            var ga = new GameUI({
+                'canvasId': 'myCanvas',
+                'grid': false,
+                'backgroundImageURL': imgURL
+            });
+            ga.init();
+            var obj = {
+                x: 7,
+                y: 4,
+                img: {
+                    url: 'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png',
+                    width: 32,
+                    height: 32
+                }
+            };
+            ga.addObj(obj);
+        })()
+    </script>
+</body>
+
+</html>

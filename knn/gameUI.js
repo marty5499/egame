@@ -91,7 +91,7 @@ class GameUI {
     this.ctx.closePath();
   }
 
-  clone(obj) {
+  cloneObj(obj) {
     return JSON.parse(JSON.stringify(obj));
   }
 
