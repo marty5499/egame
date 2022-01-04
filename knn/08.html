@@ -1,0 +1,439 @@
+<html>
+
+<head>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=1">
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            font-family: '微軟正黑體';
+        }
+
+        body {
+            overflow: hidden;
+            background: #030507
+        }
+
+        #content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -640px;
+            margin-top: -400px;
+            width: 1280px;
+            height: 800px;
+            transform-origin: center center 0px;
+            background: #030507;
+        }
+
+        #content button {
+            position: absolute;
+            width: 140px;
+            font-size: 1.5em;
+            cursor: pointer;
+            border-radius: 10px;
+            background: rgb(0, 160, 32);
+            padding: 5px 0;
+            border: 1px solid #fff;
+            color: #fff;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        /* chart */
+        #chart {
+            position: absolute;
+            left: 50px;
+            top: 60px;
+            width: 1000px;
+            height: 690px;
+        }
+
+        #chartGraph {
+            position: absolute;
+            left: 40px;
+            top: 0;
+            width: 960px;
+            height: 640px;
+            border-left: 2px solid rgb(255, 192, 96);
+            border-bottom: 2px solid rgb(255, 192, 96);
+        }
+
+        #chartCarpet {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #chartYT {
+            left: 0;
+            top: 240px;
+            width: 40px;
+        }
+
+        #chartYH {
+            left: 10px;
+            top: 0;
+            width: 40px;
+        }
+
+        #chartYL {
+            left: 10px;
+            top: 580px;
+            width: 40px;
+        }
+
+        #chartXT {
+            left: 430px;
+            top: 650px;
+        }
+
+        #chartXL {
+            left: 50px;
+            top: 650px;
+        }
+
+        #chartXH {
+            left: 970px;
+            top: 650px;
+        }
+
+        #chartCheck {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #chartCheck img {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+        }
+
+        .chartTitle {
+            position: absolute;
+            font-size: 2em;
+            color: rgb(255, 192, 96);
+        }
+
+        .chartTag {
+            position: absolute;
+            font-size: 2em;
+            color: #fff;
+        }
+
+        /* mango */
+        .mango {
+            position: absolute;
+        }
+
+        .mangoIcon {
+            position: absolute;
+            left: -16px;
+            top: -16px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+
+        .mangoIcon * {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mangoIcon div {
+            color: #fff;
+            font-size: 1.75em;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: top;
+            line-height: 32px;
+        }
+
+        .mangoDialogue {
+            position: absolute;
+            left: 16px;
+            top: 0;
+            width: 160px;
+            color: #fff;
+            font-size: 1.5em;
+            border: 1px solid #fff;
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 101;
+            background: #030507;
+        }
+
+        .mangoDialogue p {
+            padding-left: 32px;
+            cursor: pointer;
+        }
+
+        p.uncheck {
+            background-image: url("http://code.jcps.kh.edu.tw/egameai/missions/newbie/images/checkbox_uncheck.png");
+            background-repeat: no-repeat;
+            background-size: 28px;
+            background-position: 2px 4px;
+        }
+
+        p.checked {
+            background-image: url("http://code.jcps.kh.edu.tw/egameai/missions/newbie/images/checkbox_checked.png");
+            background-repeat: no-repeat;
+            background-size: 28px;
+            background-position: 2px 4px;
+        }
+
+        /* dialogue */
+        #dialogue {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 102;
+        }
+
+        #dialogueCarpet {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(3, 5, 7, 0.6)
+        }
+
+        /* dialogueDirection */
+        #dialogueDirection {
+            position: absolute;
+            width: 800px;
+            height: 480px;
+            left: 170px;
+            top: 120px;
+            border: 1px solid #fff;
+            border-radius: 10px;
+            background: #030507;
+        }
+
+        #dialogueDirection p {
+            color: #fff;
+            margin: 20px;
+            font-size: 1.75em;
+        }
+
+        .dialogueDirectionGo {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            bottom: 20px;
+            cursor: pointer;
+        }
+
+        .dialogueDirectionGo.back {
+            left: 20px;
+        }
+
+        .dialogueDirectionGo.next {
+            right: 20px;
+        }
+
+        #dialogueDirectionButton {
+            top: 60px;
+            right: 50px;
+        }
+
+        /* dialogueTable */
+        #dialogueTable {
+            position: absolute;
+            width: 800px;
+            left: 170px;
+            top: 170px;
+        }
+
+        #dialogueTable table {
+            border: 1px solid #fff;
+            background: #030507;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 5px;
+            border-radius: 10px;
+        }
+
+        #dialogueTable th,
+        td {
+            border: 1px solid #fff;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        #dialogueTableButton {
+            top: 120px;
+            right: 50px;
+        }
+
+        /* dialogueMemo */
+        #dialogueMemo {
+            position: absolute;
+            width: 760px;
+            left: 170px;
+            top: 70px;
+            border: 1px solid #fff;
+            border-radius: 10px;
+            background: #030507;
+            padding: 20px;
+        }
+
+        #dialogueMemo img {
+            width: 100%;
+        }
+
+        #dialogueMemoButton {
+            top: 180px;
+            right: 50px;
+        }
+
+        /* dialogueCheck */
+        #dialogueCheckButton {
+            top: 240px;
+            right: 50px;
+        }
+
+        #dialogueCheck {
+            position: absolute;
+            width: 800px;
+            left: 170px;
+            top: 230px;
+            text-align: center;
+            font-size: 2em;
+            color: #fff;
+            padding: 40px 0;
+            background: #030507;
+            border: 1px solid #fff;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="https://www.egame.kh.edu.tw/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="https://www.egame.kh.edu.tw/ajax/libs/egame/island/0.1.0/island.min.js"></script>
+    <script src='kdTree.js'></script>
+    <script src='knn.js'></script>
+    <script src='gameUI.js'></script>
+    <script type="text/javascript">
+        (function (window, undefined) {
+            function Newbie() {
+                this.initChart();
+                this.initMangos();
+                this.initDialogue();
+                this.initDirection();
+                this.initTable();
+                this.initMemo();
+                this.initCheck();
+                this.goDirection(0);
+            }
+        })(window);
+        $(document).ready(function () {
+            Island.scaleContent();
+            // bind resize 事件
+            $(window).resize(function () {
+                Island.scaleContent();
+            });
+        });
+    </script>
+    <title>智慧島</title>
+</head>
+
+<body>
+    <div id='panel' class="mangoDialogue" style="position: absolute;display:none">
+        <div>芒果甜度7.3<br>果肉細緻2.3</div>
+        <p class="mangoIrwin uncheck">愛文芒果</p>
+        <p class="mangoJinhuang uncheck">金煌芒果</p>
+    </div>
+    <script>
+        class Panel {
+            constructor(id, container) {
+                this.container = container;
+                this.ele = document.getElementById(id);
+                this.p1 = this.ele.children[1];
+                this.p2 = this.ele.children[2];
+                var self = this;
+                this.p1.addEventListener('click', function (e) {
+                    self.obj.imgEle.src =
+                        'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png';
+                });
+                this.p2.addEventListener('click', function (e) {
+                    self.obj.imgEle.src =
+                        'https://cdn.pixabay.com/photo/2016/04/01/11/31/banana-1300390_960_720.png';
+                });
+            }
+            move(x, y) {
+                var pos = this.container.getBoundingClientRect();
+                var fixH = pos.height / this.container.height;
+                var fixW = pos.width / this.container.width;
+                this.ele.style.top = (pos.top + y * fixH) + "px";
+                this.ele.style.left = (pos.left + x * fixW) + "px";
+            }
+            show() {
+                this.ele.style.display = ''
+            }
+            hide() {
+                this.ele.style.display = 'none'
+            }
+        }
+    </script>
+
+    <div id="content" style="transform: scale(0.71875);">
+        <div id="chart">
+            <canvas id="chartGraph">
+            </canvas>
+            <div id="chartYT" class="chartTitle">果肉細緻</div>
+            <div id="chartYH" class="chartTag">4</div>
+            <div id="chartYL" class="chartTag">0</div>
+            <div id="chartXT" class="chartTitle">芒果甜度</div>
+            <div id="chartXL" class="chartTag">0</div>
+            <div id="chartXH" class="chartTag">12</div>
+        </div>
+        <button id="dialogueDirectionButton">操作說明</button><button id="dialogueTableButton">查看資料</button><button
+            id="dialogueMemoButton">芒果特色</button><button id="dialogueCheckButton">檢查答案</button>
+    </div>
+    <script>
+        var ga, panel;
+        (async function () {
+            var imgURL = 'https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg';
+            ga = new GameUI({
+                'grid': false,
+                'canvasId': 'chartGraph',
+                'backgroundImageURL': imgURL,
+                'clickEvent': function (evt, obj) {
+                    panel.move(obj.x + 10, obj.y + 10);
+                    panel.obj = obj;
+                    panel.show();
+                }
+            });
+            panel = new Panel('panel', ga.canvas);
+            await ga.init();
+            var obj = {
+                x: 5,
+                y: 5,
+                img: {
+                    url: 'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png',
+                    width: 32,
+                    height: 32
+                },
+                sw: true
+            };
+            await ga.addObj(obj);
+            await ga.addObj(ga.cloneObj(obj, 7, 3));
+            await ga.addObj(ga.cloneObj(obj, 7, 6));
+            await ga.addObj(ga.cloneObj(obj, 3, 4));
+            await ga.addObj(ga.cloneObj(obj, 3, 5));
+            await ga.addObj(ga.cloneObj(obj, 4, 3));
+            await ga.addObj(ga.cloneObj(obj, 6, 9));
+            ga.setKVal(4).setDVal(3);
+            ga.drawArrow(obj, color = '#fe6699', lineWidth = 3);
+        })()
+    </script>
+</body>
+
+</html>
