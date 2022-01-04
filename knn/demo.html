@@ -1,0 +1,73 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <h1>Demo</h1>
+    <canvas id='myCanvas' width='500' height='500'></canvas>
+    <script src='kdTree.js'></script>
+    <script src='knn.js'></script>
+    <script src='gameUI.js'></script>
+    <script>
+        var ga;
+        var aa = {
+            x: 7,
+            y: 4,
+            img: {
+                url: 'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png',
+                width: 32,
+                height: 32
+            }
+        };
+
+        var bb = {
+            x: 5,
+            y: 5,
+            img: {
+                url: 'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png',
+                width: 32,
+                height: 32
+            }
+        };
+
+        var cc = {
+            x: 3,
+            y: 6,
+            img: {
+                url: 'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png',
+                width: 32,
+                height: 32
+            }
+        };
+
+        (async function () {
+            ga = new GameUI({
+                'canvasId': 'myCanvas',
+                'grid': false,
+                'click': function (evt, obj) {
+                    console.log("obj:", evt, obj);
+                },
+                'initObj': function (obj) {
+                    var x = Math.round(this.rate * obj.x) / this.rate;
+                    var y = Math.round(this.rate * obj.y) / this.rate;
+                    var kx = Math.round(this.rate * x / this.zoom) / this.rate;
+                    var ky = Math.round(this.rate * y / this.zoom) / this.rate;
+                    this.ctx.font = "16px Arial";
+                    this.ctx.fillStyle = '#ffeeee'
+                    this.ctx.fillText(
+                        '(' + obj.serial + ")[" + kx + "," + ky + "]", x + 10, y - 16);
+                }
+            });
+            await ga.init();
+            await ga.addObj(aa);
+            await ga.addObj(bb);
+            await ga.addObj(cc);
+            ga.setKVal(2).setDVal(2);
+            ga.drawRange(bb, color = '#fe2233', lineWidth = 5);
+            ga.drawArrow(bb, color = '#fe2233', lineWidth = 5);
+        })()
+    </script>
+</body>
+
+</html>

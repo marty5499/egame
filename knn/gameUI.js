@@ -5,21 +5,56 @@
  * @constructor
  */
 class GameUI {
-  constructor(eleCanvas, zoom) {
-    this.circles = [];
-    this.tiers = [];
-    this.k = this.d = 1;
+
+  setConfig(cfg) {
+    this.config = {};
+    this.config.zoom = cfg.zoom != undefined ? cfg.zoom : 50;
+    this.config.canvasId = cfg.canvasId;
+    this.config.strokeStyle = cfg.strokeStyle != undefined ? cfg.strokeStyle : "#cecece";
+    this.config.grid = cfg.grid != undefined ? cfg.grid : true;
+    this.config.backgroundImageURL = cfg.backgroundImageURL != undefined ? cfg.backgroundImageURL : '';
+    this.config.backgroundImageAlpha = cfg.backgroundImageAlpha != undefined ? cfg.backgroundImageAlpha : 0.9;
+    this.config.lineWidth = cfg.lineWidth != undefined ? cfg.lineWidth : 2;
+    this.config.kVal = cfg.kVal != undefined ? cfg.kVal : 3;
+    this.config.dVal = cfg.dVal != undefined ? cfg.dVal : 3;
+    this.clickEvent = cfg.click != undefined ? cfg.click : function () { };
+    this.initEvent = cfg.initObj != undefined ? cfg.initObj : function () { };
+  }
+
+  constructor(config) {
+    this.setConfig(config);
     GameUI.serial = 1;
-    this.initUI(eleCanvas, zoom);
+    this.objs = [];
+    this.rate = 10.0;
+    this.zoom = this.config.zoom;
+    this.canvas = document.getElementById(this.config.canvasId);
     this.setKnn();
+    this.ctx = this.canvas.getContext("2d");
+    this.cw = this.canvas.width;
+    this.ch = this.canvas.height;
+  }
+
+  async init() {
+    await this.setBackgroundImage(
+      this.config.backgroundImageURL, this.config.backgroundImageAlpha);
+  }
+
+  initObj(cb) {
+    this.initEvent = cb;
+  }
+
+  click(fn) {
+    this.clickEvent = fn;
   }
 
   setKVal(k) {
-    this.knn.setKVal(this.k = k);
+    this.knn.setKVal(this.config.kVal = (k + 1));
+    return this;
   }
 
   setDVal(d) {
-    this.d = d;
+    this.config.dVal = d;
+    return this;
   }
 
   setKnn() {
@@ -31,273 +66,186 @@ class GameUI {
    * @param {string} url - 背景圖片網址 https://......
    * @param {string} alpha - 背景圖片透明度 0(不透明)～1(完全透明)
    */
-  setBackgroundImage(url, alpha) {
-    this.knn.setBackgroundImage(url, alpha);
+  async setBackgroundImage(url, alpha) {
+    if (url != '') {
+      this.background = await this.loadImage(url);
+      this.ctx.globalAlpha = alpha;
+      this.ctx.clearRect(0, 0, this.cw, this.ch);
+      this.ctx.drawImage(this.background, 0, 0);
+    }
+    if (this.config.grid) {
+      this.drawCrossLine();
+    }
   }
 
-  initUI(eleCanvas, zoom) {
-    this.canvas = eleCanvas;
-    this.stdRadius = 6; //point radius
-    this.lastX;
-    this.lastY;
-    this.isDown = false;
-    this.draggingCircle = -1;
-    this.zoom = zoom;
-    this.rate = 10.0;
-    this.PI2 = Math.PI * 2;
-    var self = this;
-    // canvas related variables
-    // references to canvas and its context and its position on the page
-    this.ctx = eleCanvas.getContext("2d");
-    this.cw = eleCanvas.width;
-    this.ch = eleCanvas.height;
-    this.offsetX = eleCanvas.offsetLeft;
-    this.offsetY = eleCanvas.offsetTop;
-    // listen for mouse events
-    /*
-    this.canvas.addEventListener('mousedown', e => {
-      self.handleMouseDown.call(self, e);
-    });
-    this.canvas.addEventListener('mousemove', e => {
-      self.handleMouseMove.call(self, e);
-      var x = self.draggingCircle.x / self.zoom;
-      var y = self.draggingCircle.y / self.zoom;
-      if (self.isDown) {
-        self.showNearest(self.draggingCircle, x, y);
-        self.drawAll();
+  drawCrossLine() {
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = this.config.strokeStyle;
+    this.ctx.lineWidth = this.config.lineWidth;
+    for (var x = 0; x <= this.cw; x = x + this.zoom) {
+      for (var y = 0; y <= this.ch; y = y + this.zoom) {
+        this.ctx.rect(x, y, x + this.zoom, y + this.zoom);
       }
-    });
-    this.canvas.addEventListener('mouseup', e => {
-      this.isDown = false;
-      this.drawAll();
-      self.resetCircleColor();
-      self.handleMouseUp.call(self, e);
-    });
-    this.canvas.addEventListener('mouseout', e => {
-      this.isDown = false;
-      this.drawAll();
-      //self.handleMouseUp.call(self, e);
-      self.resetCircleColor();
-    });
-    //*/;
-  }
-
-  showNearest(circle, x, y) {
-    this.resetCircleColor();
-    var data = this.knn.nearest.call(this.knn, x, y, this.k, this.d);
-    for (var i = 0; i < data.length; i++) {
-      data[i][0].color = this.getNestColor();
     }
-    circle.color = this.getMoveColor();
+    this.ctx.stroke();
+    this.ctx.closePath();
   }
-
-  resetCircleColor() {
-    for (var i = 0; i < this.circles.length; i++) {
-      var color = this.circles[i].defColor == null ? this.getColor() : this.circles[i].defColor;
-      this.circles[i].color = color;
-
-    }
-  }
-
-  restart(saveCircles) {
-    GameUI.serial = 1;
-    this.tiers = [];
-    this.circles = [];
-    this.setKnn();
-    for (var i = 0; i < saveCircles.length; i++) {
-      this.addCircle({
-        x: saveCircles[i].kx,
-        y: saveCircles[i].ky
-      });
-    }
-  }
-
 
   clone(obj) {
     return JSON.parse(JSON.stringify(obj));
   }
 
   delObj(obj) {
-    const index = this.circles.indexOf(obj);
+    const index = this.objs.indexOf(obj);
     if (index > -1) {
-      this.circles.splice(index, 1);
+      this.objs.splice(index, 1);
+      this.knn.remove(obj);
+      obj.img.remove();
+      this.refresh();
+      return true;
     }
-    this.knn.remove(obj);
-    this.drawAll();
+    return false;
   }
 
-  addObj(obj) {
+  async addObj(obj) {
+    var self = this;
     obj.kx = obj.x;
     obj.ky = obj.y;
     obj.x = obj.x * this.zoom;
     obj.y = obj.y * this.zoom;
     obj.serial = GameUI.serial++;
-    obj.tier = typeof obj.tier == 'undefined' ? 0 : obj.tier;
-    obj.merge = typeof obj.merge == 'undefined' ? false : obj.merge;
-    obj.defColor = typeof obj.color != 'undefined' ? obj.color : null;
-    obj.color = typeof obj.color == 'undefined' ? this.getColor() : obj.color;
-    obj.radius = typeof obj.radius == 'undefined' ? this.stdRadius : obj.radius;
-    obj.mergeRadius = typeof obj.mergeRadius == 'undefined' ? 0 : obj.mergeRadius;
+    obj.img = await this.loadImage(obj.img.url, obj.img.width, obj.img.height);
+    obj.img.style.cursor = 'pointer';
     obj.img.style.top = (this.canvas.offsetTop + obj.y - obj.img.height / 2) + "px";
     obj.img.style.left = (this.canvas.offsetLeft + obj.x - obj.img.width / 2) + "px";
-    obj.img.addEventListener("click", obj.click);
+    obj.img.addEventListener("click", function (evt) {
+      self.clickEvent(evt, obj)
+    });
     this.knn.remove(obj);
     this.knn.insert(obj);
     var empty = true;
-    for (var i = 0; i < this.circles.length; i++) {
-      if (obj == this.circles[i]) empty = false;
+    for (var i = 0; i < this.objs.length; i++) {
+      if (obj == this.objs[i]) empty = false;
     }
     if (empty) {
-      this.circles.push(obj);
+      this.objs.push(obj);
     }
-    this.drawAll();
+    this.initEvent(obj);
     return obj;
   }
 
-  drawCircle(circle) {
-    var ctx = this.ctx;
-    ctx.font = "16px Arial";
-    var x = Math.round(this.rate * circle.x) / this.rate;
-    var y = Math.round(this.rate * circle.y) / this.rate;
-    ctx.beginPath();
-    ctx.fillStyle = circle.defColor == null ? circle.color : circle.defColor;
-    ctx.strokeStyle = circle.defColor == null ? circle.color : circle.defColor;
-    ctx.arc(x, y, circle.radius, 0, this.PI2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.beginPath();
-    ctx.arc(x, y, circle.mergeRadius * this.zoom, 0, this.PI2);
-    ctx.stroke();
-    var kx = Math.round(this.rate * x / this.zoom) / this.rate;
-    var ky = Math.round(this.rate * y / this.zoom) / this.rate;
-    ctx.fillText('(' + circle.serial + ")[" + kx + "," + ky + "]", x + 5, y - 10);
-    ctx.closePath();
+  async init() {
+    await this.refresh();
   }
 
-  // clear the canvas and redraw all existing circles
-  drawAll() {
-    var ctx = this.ctx;
-    ctx.font = "16px Arial";
-    ctx.clearRect(0, 0, this.cw, this.ch);
-    for (var i = 0; i < this.circles.length; i++) {
-      var circle = this.circles[i];
-      var x = Math.round(this.rate * circle.x) / this.rate;
-      var y = Math.round(this.rate * circle.y) / this.rate;
-      ctx.beginPath();
-      ctx.fillStyle = circle.color;
-      ctx.arc(x, y, circle.radius, 0, this.PI2);
-      ctx.fill();
-      ctx.closePath();
-      //var w = circle.img.width;
-      //var h = circle.img.height;
-      //ctx.drawImage(circle.img, x-w/2,y-h/2,w,h);
-      if (this.isDown && this.draggingCircle == circle) {
-        ctx.globalAlpha = 0.1;
-        ctx.beginPath();
-        ctx.setLineDash([5, 15]);
-        ctx.arc(x, y, this.d * this.zoom, 0, this.PI2);
-        ctx.fill();
-        ctx.closePath();
-        ctx.globalAlpha = 1;
-      }
-      var kx = Math.round(this.rate * x / this.zoom) / this.rate;
-      var ky = Math.round(this.rate * y / this.zoom) / this.rate;
-      ctx.fillText('(' + circle.serial + ")[" + kx + "," + ky + "]", x + 5, y - 10);
+  async refresh() {
+    await this.setBackgroundImage(
+      this.config.backgroundImageURL, this.config.backgroundImageAlpha);
+  }
+
+  drawRange(obj, color, lineWidth) {
+    var bakStrole = this.ctx.strokeStyle;
+    var bakLineWidth = this.ctx.lineWidth;
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = lineWidth;
+    this.ctx.beginPath();
+    this.ctx.arc(obj.x, obj.y, ga.config.zoom * this.config.dVal, 0, 2 * Math.PI);
+    this.ctx.stroke();
+    this.ctx.strokeStyle = bakStrole;
+    this.ctx.lineWidth = bakLineWidth;
+  }
+
+  showNearest(obj) {
+    var data = this.knn.nearest.call(this.knn, obj.kx, obj.ky, this.config.kVal, this.config.dVal + 0.001/*fix js float*/);
+    var objs = [];
+    for (var i = 0; i < data.length; i++) {
+      if (data[i][0] != obj)
+        objs.push(data[i]);
+    }
+    return objs;
+  }
+
+  drawArrow(srcObj, color, lineWidth) {
+    var objs = this.showNearest(srcObj);
+    for (var i = 0; i < objs.length; i++) {
+      this.drawArrowTo(srcObj, objs[i][0], 5, 10, true, true, color);
     }
   }
 
-  handleMouseDown(e) {
-    // tell the browser we'll handle this event
-    e.preventDefault();
-    e.stopPropagation();
-    // save the mouse position
-    // in case this becomes a drag operation
-    this.lastX = parseInt(e.clientX - this.offsetX);
-    this.lastY = parseInt(e.clientY - this.offsetY);
-    // hit test all existing circles
-    var hit = -1;
-    for (var i = 0; i < this.circles.length; i++) {
-      var circle = this.circles[i];
-      var dx = this.lastX - circle.x;
-      var dy = this.lastY - circle.y;
-      if (dx * dx + dy * dy < circle.radius * circle.radius) {
-        hit = i;
-        circle.color = this.getMoveColor();
-        this.knn.remove(circle);
-        this.showNearest(circle, circle.kx, circle.ky);
-        this.drawAll();
+  drawArrowTo(objA, objB, aWidth, aLength, arrowStart, arrowEnd, color) {
+    var x0 = objA.x;
+    var y0 = objA.y;
+    var x1 = objB.x;
+    var y1 = objB.y;
+    if (x1 != x0) {
+      if (x1 > x0) {
+        x0 += objA.img.width / 3;
+        x1 -= objB.img.width / 3;
+      } else {
+        x0 -= objA.img.width / 3;
+        x1 += objB.img.width / 3;
       }
     }
-    // if no hits then add a circle
-    // if hit then set the isDown flag to start a drag
-    if (hit < 0) {
-      var newDot = {
-        x: this.lastX / this.zoom,
-        y: this.lastY / this.zoom,
-        radius: this.stdRadius,
-        color: this.getColor()
-      };
-      console.log("new:", newDot.x, newDot.y);
-      //this.addCircle(newDot);
-    } else {
-      this.draggingCircle = this.circles[hit];
-      this.isDown = true;
+    if (y1 != y0) {
+      if (y1 < y0) {
+        y0 -= objA.img.height / 3;
+        y1 += objB.img.height / 3;
+      } else {
+        y0 += objA.img.height / 3;
+        y1 -= objB.img.height / 3;
+      }
     }
+    this.drawLineWithArrows(x0, y0, x1, y1, aWidth, aLength, arrowStart, arrowEnd, color);
   }
 
-  handleMouseUp(e) {
-    // tell the browser we'll handle this event
-    e.preventDefault();
-    e.stopPropagation();
+  drawLineWithArrows(x0, y0, x1, y1, aWidth, aLength, arrowStart, arrowEnd, color) {
+    var ctx = this.ctx;
+    var bakStrokeStyle = ctx.strokeStyle;
+    var bakLineWidth = ctx.lineWidth;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = aWidth;
+    var dx = x1 - x0;
+    var dy = y1 - y0;
+    var angle = Math.atan2(dy, dx);
+    var length = Math.sqrt(dx * dx + dy * dy);
     //
-    if (this.draggingCircle != -1) {
-      this.draggingCircle.x = Math.round(this.rate * this.draggingCircle.x / this.zoom) / this.rate;
-      this.draggingCircle.y = Math.round(this.rate * this.draggingCircle.y / this.zoom) / this.rate;
-      this.addObj(this.draggingCircle);
+    ctx.translate(x0, y0);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(length, 0);
+    if (arrowStart) {
+      ctx.moveTo(aLength, -aWidth);
+      ctx.lineTo(0, 0);
+      ctx.lineTo(aLength, aWidth);
     }
-    // stop the drag
-    this.isDown = false;
-    this.draggingCircle = -1;
-  }
-
-  handleMouseMove(e) {
-    // if we're not dragging, just exit
-    if (!this.isDown) {
-      return;
+    if (arrowEnd) {
+      ctx.moveTo(length - aLength, -aWidth);
+      ctx.lineTo(length, 0);
+      ctx.lineTo(length - aLength, aWidth);
     }
-    // tell the browser we'll handle this event
-    e.preventDefault();
-    e.stopPropagation();
-    // get the current mouse position
-    this.mouseX = parseInt(e.clientX - this.offsetX);
-    this.mouseY = parseInt(e.clientY - this.offsetY);
-    // calculate how far the mouse has moved
-    // since the last mousemove event was processed
-    var dx = this.mouseX - this.lastX;
-    var dy = this.mouseY - this.lastY;
-    // reset the lastX/Y to the current mouse position
-    this.lastX = this.mouseX;
-    this.lastY = this.mouseY;
-    // change the target circles position by the 
-    // distance the mouse has moved since the last
-    // mousemove event
-    this.draggingCircle.x += dx;
-    this.draggingCircle.y += dy;
+    //
+    ctx.stroke();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.lineWidth = bakLineWidth;
+    ctx.strokeStyle = bakStrokeStyle;
   }
 
-  getColor() {
-    return ('#000');
-  }
 
-  getMoveColor() {
-    return ('#f03366');
-  }
-
-  getNestColor() {
-    return ('#4ad84a');
-  }
-
-  getMergeColor() {
-    return ('#1133fa');
-  }
+  async loadImage(url, width, height) {
+    return new Promise((resolve, reject) => {
+      var img = new Image(width, height);
+      document.body.appendChild(img);
+      img.src = url;
+      img.width = width;
+      img.height = height;
+      img.style.position = 'absolute';
+      img.style.display = 'none';
+      img.onload = async () => {
+        //console.log("Image Loaded:", url);
+        img.style.display = '';
+        resolve(img);
+      };
+    });
+  };
 }

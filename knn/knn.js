@@ -6,30 +6,10 @@
  */
 class KNN {
   constructor(zoom, rate) {
-    this.canvas = document.getElementById('c');
-    this.ctx = this.canvas.getContext("2d");
     this.points = [];
     this.zoom = zoom;
     this.rate = rate;
     this.tree = new kdTree([], this.distance, ['kx', 'ky']);
-    var self = this;
-    this.background = new Image();
-    this.background.onload = function () {
-      self.ctx.globalAlpha = self.background_globalAlpha;
-      self.ctx.drawImage(self.background, 0, 0);
-      self.render();
-    }
-    this.setBackgroundImage('', 1);
-  }
-
-  /**
-   * 設定背影圖片
-   * @param {string} url - 背景圖片網址 https://......
-   * @param {string} alpha - 背景圖片透明度 0(不透明)～1(完全透明)
-   */
-  setBackgroundImage(url, alpha) {
-    this.background.src = url;
-    this.background_globalAlpha = alpha;
   }
 
   /**
@@ -89,17 +69,7 @@ class KNN {
    * @param {obj} 
    */
   nearest(x, y, k, d) {
-    var v = this.tree.nearest({ kx: x, ky: y }, k, d);
-    var info = '';
-    for (var i = 0; i < v.length; i++) {
-      var distance = parseInt(v[i][1] * this.rate) / this.rate;
-      var x = Math.round(v[i][0].kx * this.rate) / this.rate;
-      var y = Math.round(v[i][0].ky * this.rate) / this.rate;
-      var data = '(x=' + x + ',y=' + y + ') distance=' + distance + ' \n';
-      info += data;
-    }
-    text.innerText = info;
-    return v;
+    return this.tree.nearest({ kx: x, ky: y }, k, d);
   }
 
   distance(a, b) {
@@ -131,24 +101,4 @@ class KNN {
     this.tree.remove(point);
   }
 
-  render() {
-    this.draw(this.zoom);
-  }
-
-  draw(n) {
-    var ctx = this.ctx;
-    var w = this.canvas.width;
-    var h = this.canvas.height;
-    ctx.font = "16px Arial";
-    ctx.beginPath();
-    //ctx.fillStyle = '#000000';
-    ctx.strokeStyle = "#cecece";
-    for (var x = 0; x < w; x = x + n) {
-      for (var y = 0; y < h; y = y + n) {
-        ctx.rect(x, y, x + n, y + n);
-      }
-    }
-    ctx.stroke();
-    ctx.closePath();
-  }
 }

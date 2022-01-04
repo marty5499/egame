@@ -215,7 +215,6 @@
                     node.left = null;
                     node.obj = nextObj;
                 }
-
             }
 
             node = nodeSearch(self.root);

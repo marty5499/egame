@@ -2,9 +2,9 @@
 
 <head>
   <style>
-  canvas {
-    border: 1px solid black;
-  }
+    canvas {
+      border: 1px solid black;
+    }
   </style>
 </head>
 
@@ -18,47 +18,47 @@
   <script src='knn.js'></script>
   <script src='gameUI.js'></script>
   <script>
-  var ga;
-  loadImage = async (url, width, height) => {
-    return new Promise((resolve, reject) => {
-      var img = new Image(width, height);
-      document.body.appendChild(img);
-      img.src = url;
-      img.width = width;
-      img.height = height;
-      img.style.position = 'absolute';
-      img.onload = async () => {
-        console.log("Image Loaded:",url);
-        resolve(img);
-      };
-    });
-  };
-  (async function () {
-    var d = document.getElementById('d');
-    var img1 = 'https://images.996pic.com/d93d840d1d494d42a16f46837e65c94f680_680.jpg';
-    img1 = 'https://www.pngpix.com/wp-content/uploads/2016/03/Fresh-Mango-Fruit-PNG-image.png'
-    ga = new GameUI(d, zoom = 50);
-    //
-    ga.setBackgroundImage("https://images.chinatimes.com/newsphoto/2019-10-26/900/20191026002589.jpg", 0.6);
-    ga.addObj({
-      x: 1,
-      y: 1,
-      img: await loadImage(img1, 32, 32),
-      click: function(){
-        alert(123);
-      }
-    });
-    ga.addObj({
-      x: 3,
-      y: 2,
-      img: await loadImage(img1, 32, 32),
-      click: function(){
-        alert(456);
-      }
-    });
-    ga.setKVal(2);
-    ga.setDVal(3);
-  })()
+    var ga;
+    loadImage = async (url, width, height) => {
+      return new Promise((resolve, reject) => {
+        var img = new Image(width, height);
+        document.body.appendChild(img);
+        img.src = url;
+        img.width = width;
+        img.height = height;
+        img.style.position = 'absolute';
+        img.onload = async () => {
+          console.log("Image Loaded:", url);
+          resolve(img);
+        };
+      });
+    };
+    (async function () {
+      var d = document.getElementById('d');
+      var img1 = 'https://images.996pic.com/d93d840d1d494d42a16f46837e65c94f680_680.jpg';
+      img1 = 'https://www.pngpix.com/wp-content/uploads/2016/03/Fresh-Mango-Fruit-PNG-image.png'
+      ga = new GameUI(d, zoom = 50);
+      //
+      ga.setBackgroundImage("https://images.chinatimes.com/newsphoto/2019-10-26/900/20191026002589.jpg", 0.6);
+      ga.addObj({
+        x: 1,
+        y: 1,
+        img: await loadImage(img1, 32, 32),
+        click: function () {
+          alert(123);
+        }
+      });
+      ga.addObj({
+        x: 3,
+        y: 2,
+        img: await loadImage(img1, 32, 32),
+        click: function () {
+          alert(456);
+        }
+      });
+      ga.setKVal(2);
+      ga.setDVal(3);
+    })()
   </script>
 </body>
 
