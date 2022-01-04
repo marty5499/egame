@@ -149,7 +149,7 @@ class GameUI {
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
-    this.ctx.arc(obj.x, obj.y, ga.config.zoom * this.config.dVal, 0, 2 * Math.PI);
+    this.ctx.arc(obj.x, obj.y, this.config.zoom * this.config.dVal, 0, 2 * Math.PI);
     this.ctx.stroke();
     this.ctx.strokeStyle = bakStrole;
     this.ctx.lineWidth = bakLineWidth;
