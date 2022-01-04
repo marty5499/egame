@@ -6,25 +6,33 @@
     <script src='gameUI.js'></script>
     <canvas id='myCanvas' width='500' height='500'></canvas>
     <script>
+        var ga;
         (async function () {
             var imgURL = 'https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg';
-            var ga = new GameUI({
+            ga = new GameUI({
                 'canvasId': 'myCanvas',
-                'grid':false,
+                'grid': false,
                 'backgroundImageURL': imgURL
             });
             await ga.init();
             var obj = {
-                x: 3, y: 3,
+                x: 5,
+                y: 5,
                 img: {
                     url: 'https://md.kingkit.codes/uploads/upload_cd6ade2823442fc61bd23435b1cc070f.png',
-                    width: 32, height: 32
+                    width: 32,
+                    height: 32
                 }
             };
-            ga.addObj(obj);
-            ga.addObj(ga.cloneObj(obj,5,5));
-            ga.setKVal(1).setDVal(2);
-            ga.drawRange(obj, color = '#fe2233', lineWidth = 5);
+            await ga.addObj(obj);
+            await ga.addObj(ga.cloneObj(obj, 7, 3));
+            await ga.addObj(ga.cloneObj(obj, 7, 6));
+            await ga.addObj(ga.cloneObj(obj, 3, 4));
+            await ga.addObj(ga.cloneObj(obj, 3, 5));
+            await ga.addObj(ga.cloneObj(obj, 4, 3));
+            await ga.addObj(ga.cloneObj(obj, 6, 9));
+            ga.setKVal(4).setDVal(3);
+            ga.drawArrow(obj, color = '#fe6699', lineWidth = 3);
         })()
     </script>
 </body>

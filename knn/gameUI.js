@@ -91,8 +91,11 @@ class GameUI {
     this.ctx.closePath();
   }
 
-  cloneObj(obj) {
-    return JSON.parse(JSON.stringify(obj));
+  cloneObj(obj, x, y) {
+    var newObj = JSON.parse(JSON.stringify(obj));
+    if (x != undefined) newObj.x = x;
+    if (y != undefined) newObj.y = y;
+    return newObj;
   }
 
   delObj(obj) {
@@ -100,7 +103,7 @@ class GameUI {
     if (index > -1) {
       this.objs.splice(index, 1);
       this.knn.remove(obj);
-      obj.img.remove();
+      obj.imgEle.remove();
       this.refresh();
       return true;
     }
@@ -114,11 +117,11 @@ class GameUI {
     obj.x = obj.x * this.zoom;
     obj.y = obj.y * this.zoom;
     obj.serial = GameUI.serial++;
-    obj.img = await this.loadImage(obj.img.url, obj.img.width, obj.img.height);
-    obj.img.style.cursor = 'pointer';
-    obj.img.style.top = (this.canvas.offsetTop + obj.y - obj.img.height / 2) + "px";
-    obj.img.style.left = (this.canvas.offsetLeft + obj.x - obj.img.width / 2) + "px";
-    obj.img.addEventListener("click", function (evt) {
+    obj.imgEle = await this.loadImage(obj.img.url, obj.img.width, obj.img.height);
+    obj.imgEle.style.cursor = 'pointer';
+    obj.imgEle.style.top = (this.canvas.offsetTop + obj.y - obj.img.height / 2) + "px";
+    obj.imgEle.style.left = (this.canvas.offsetLeft + obj.x - obj.img.width / 2) + "px";
+    obj.imgEle.addEventListener("click", function (evt) {
       self.clickEvent(evt, obj)
     });
     this.knn.remove(obj);
@@ -168,7 +171,7 @@ class GameUI {
   drawArrow(srcObj, color, lineWidth) {
     var objs = this.showNearest(srcObj);
     for (var i = 0; i < objs.length; i++) {
-      this.drawArrowTo(srcObj, objs[i][0], 5, 10, true, true, color);
+      this.drawArrowTo(srcObj, objs[i][0], lineWidth, 10, true, true, color);
     }
   }
 
@@ -177,25 +180,7 @@ class GameUI {
     var y0 = objA.y;
     var x1 = objB.x;
     var y1 = objB.y;
-    if (x1 != x0) {
-      if (x1 > x0) {
-        x0 += objA.img.width / 3;
-        x1 -= objB.img.width / 3;
-      } else {
-        x0 -= objA.img.width / 3;
-        x1 += objB.img.width / 3;
-      }
-    }
-    if (y1 != y0) {
-      if (y1 < y0) {
-        y0 -= objA.img.height / 3;
-        y1 += objB.img.height / 3;
-      } else {
-        y0 += objA.img.height / 3;
-        y1 -= objB.img.height / 3;
-      }
-    }
-    this.drawLineWithArrows(x0, y0, x1, y1, aWidth, aLength, arrowStart, arrowEnd, color);
+    this.drawLineWithArrows(x0, y0, x1, y1, aWidth, aLength, false, arrowEnd, color);
   }
 
   drawLineWithArrows(x0, y0, x1, y1, aWidth, aLength, arrowStart, arrowEnd, color) {
@@ -207,7 +192,7 @@ class GameUI {
     var dx = x1 - x0;
     var dy = y1 - y0;
     var angle = Math.atan2(dy, dx);
-    var length = Math.sqrt(dx * dx + dy * dy);
+    var length = Math.sqrt(dx * dx + dy * dy) - 20;
     //
     ctx.translate(x0, y0);
     ctx.rotate(angle);
