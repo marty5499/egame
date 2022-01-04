@@ -21,8 +21,8 @@
                     width: 32, height: 32
                 }
             };
-            ga.addObj(obj);
-            ga.addObj(ga.cloneObj(obj,5,5));
+            await ga.addObj(obj);
+            await ga.addObj(ga.cloneObj(obj,5,5));
             ga.setKVal(1).setDVal(2);
             ga.drawRange(obj, color = '#fe2233', lineWidth = 5);
         })()

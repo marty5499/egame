@@ -1,5 +1,4 @@
 /**
- * drag.js
  * @param {eleCanvas} canvas ID
  * @param {zoom} 座標之間的間距
  * @constructor
@@ -17,8 +16,8 @@ class GameUI {
     this.config.lineWidth = cfg.lineWidth != undefined ? cfg.lineWidth : 2;
     this.config.kVal = cfg.kVal != undefined ? cfg.kVal : 3;
     this.config.dVal = cfg.dVal != undefined ? cfg.dVal : 3;
-    this.clickEvent = cfg.click != undefined ? cfg.click : function () { };
-    this.initEvent = cfg.initObj != undefined ? cfg.initObj : function () { };
+    this.clickEvent = cfg.clickEvent != undefined ? cfg.clickEvent : function (evt, obj) { };
+    this.initEvent = cfg.initEvent != undefined ? cfg.initEvent : function (obj) { };
   }
 
   constructor(config) {
@@ -30,8 +29,10 @@ class GameUI {
     this.canvas = document.getElementById(this.config.canvasId);
     this.setKnn();
     this.ctx = this.canvas.getContext("2d");
-    this.cw = this.canvas.width;
-    this.ch = this.canvas.height;
+    this.cw = this.canvas.offsetWidth;
+    this.ch = this.canvas.offsetHeight;
+    this.canvas.width = this.canvas.offsetWidth;
+    this.canvas.height = this.canvas.offsetHeight;
   }
 
   async init() {
@@ -119,10 +120,13 @@ class GameUI {
     obj.serial = GameUI.serial++;
     obj.imgEle = await this.loadImage(obj.img.url, obj.img.width, obj.img.height);
     obj.imgEle.style.cursor = 'pointer';
-    obj.imgEle.style.top = (this.canvas.offsetTop + obj.y - obj.img.height / 2) + "px";
-    obj.imgEle.style.left = (this.canvas.offsetLeft + obj.x - obj.img.width / 2) + "px";
+    var pos = this.canvas.getBoundingClientRect();
+    var fixH = pos.height / this.canvas.height;
+    var fixW = pos.width / this.canvas.width;
+    obj.imgEle.style.top = (pos.top + obj.y * fixH - obj.img.height / 2) + "px";
+    obj.imgEle.style.left = (pos.left + obj.x * fixW - obj.img.width / 2) + "px";
     obj.imgEle.addEventListener("click", function (evt) {
-      self.clickEvent(evt, obj)
+      self.clickEvent(evt, obj);
     });
     this.knn.remove(obj);
     this.knn.insert(obj);
