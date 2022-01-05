@@ -137,7 +137,7 @@ class GameUI {
     if (empty) {
       this.objs.push(obj);
     }
-    this.initEvent(obj);
+    this.initEvent(this.ctx, obj);
     return obj;
   }
 
