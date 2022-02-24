@@ -16,8 +16,8 @@ class GameUI {
     this.config.lineWidth = cfg.lineWidth != undefined ? cfg.lineWidth : 2;
     this.config.kVal = cfg.kVal != undefined ? cfg.kVal : 3;
     this.config.dVal = cfg.dVal != undefined ? cfg.dVal : 3;
-    this.clickEvent = cfg.clickEvent != undefined ? cfg.clickEvent : function (evt, obj) { };
-    this.initEvent = cfg.initEvent != undefined ? cfg.initEvent : function (obj) { };
+    this.clickEvent = cfg.clickEvent != undefined ? cfg.clickEvent : function (evt, obj) {};
+    this.initEvent = cfg.initEvent != undefined ? cfg.initEvent : function (obj) {};
   }
 
   constructor(config) {
@@ -113,21 +113,33 @@ class GameUI {
 
   async addObj(obj) {
     var self = this;
+
+    function Field(img) {
+      var _url = img.url;
+      img.__defineGetter__("url", function () {
+        return _url;
+      });
+      img.__defineSetter__("url", async function (url) {
+        _url = url;
+        obj.imgEle = await self.loadImage(url, obj.img.width, obj.img.height);
+        obj.imgEle.style.cursor = 'pointer';
+        var pos = self.canvas.getBoundingClientRect();
+        var fixH = pos.height / self.canvas.height;
+        var fixW = pos.width / self.canvas.width;
+        obj.imgEle.style.top = (pos.top + obj.y * fixH - obj.img.height / 2) + "px";
+        obj.imgEle.style.left = (pos.left + obj.x * fixW - obj.img.width / 2) + "px";
+        obj.imgEle.addEventListener("click", function (evt) {
+          self.clickEvent(evt, obj);
+        });
+      });
+    }
+    Field(obj.img);
     obj.kx = obj.x;
     obj.ky = obj.y;
     obj.x = obj.x * this.zoom;
     obj.y = obj.y * this.zoom;
+    obj.img.url = obj.img.url;
     obj.serial = GameUI.serial++;
-    obj.imgEle = await this.loadImage(obj.img.url, obj.img.width, obj.img.height);
-    obj.imgEle.style.cursor = 'pointer';
-    var pos = this.canvas.getBoundingClientRect();
-    var fixH = pos.height / this.canvas.height;
-    var fixW = pos.width / this.canvas.width;
-    obj.imgEle.style.top = (pos.top + obj.y * fixH - obj.img.height / 2) + "px";
-    obj.imgEle.style.left = (pos.left + obj.x * fixW - obj.img.width / 2) + "px";
-    obj.imgEle.addEventListener("click", function (evt) {
-      self.clickEvent(evt, obj);
-    });
     this.knn.remove(obj);
     this.knn.insert(obj);
     var empty = true;
@@ -163,7 +175,7 @@ class GameUI {
   }
 
   showNearest(obj) {
-    var data = this.knn.nearest.call(this.knn, obj.kx, obj.ky, this.config.kVal, this.config.dVal + 0.001/*fix js float*/);
+    var data = this.knn.nearest.call(this.knn, obj.kx, obj.ky, this.config.kVal, this.config.dVal + 0.001 /*fix js float*/ );
     var objs = [];
     for (var i = 0; i < data.length; i++) {
       if (data[i][0] != obj)
