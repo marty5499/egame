@@ -3,7 +3,7 @@
  * @param {zoom} 座標之間的間距
  * @constructor
  */
-class GameUI {
+ class GameUI {
 
   setConfig(cfg) {
     this.config = {};

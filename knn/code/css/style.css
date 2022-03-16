@@ -1,0 +1,3 @@
+* { margin:0px; padding:0px; font-family:'微軟正黑體'; }
+body { overflow:hidden; background:#12224B }
+#content { position:absolute; top:50%; left:50%; margin-left:-640px; margin-top:-400px; width:1280px; height:800px; transform-origin:center center 0px; }

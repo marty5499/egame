@@ -1,0 +1,10 @@
+
+/* chart panel */
+.chartPanel { position:absolute; background-color: #dea60d; border: 2px solid #fff; padding: 10px; }
+.chartPanel div { font-size: 0.75em; }
+.chartPanelCheck { cursor: pointer; padding-left: 30px; background: url('../../images/game_bg_uncheck.png') no-repeat; background-size: contain; }
+
+/* data table */
+#gameIntroContent th, td { padding: 0 10px; text-align: center; font-size: 0.75em; }
+#gameIntroContent th { background-color: #d69d00; color: #faee00; }
+#gameIntroContent td { background-color: #cc8f0a; color: #fff; }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta charset="UTF-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=1">
+        <style>
+            /* menu */
+            .menuBlock { position: absolute; width: 380px; }
+            #menu00 { top: 200px; left: 220px; }
+            #menu01 { top: 200px; right: 220px; }
+            #menu02 { top: 400px; left: 220px; }
+            #menu03 { top: 400px; right: 220px; }
+            .menuTitle { color: #fff; font-size: 2em; }
+            .menuItems a { display: inline-block; width: 120px; height: 100px; text-decoration: none;}
+            .menuItems a p { font-size: 1.5em; color: #fff; margin-top: 30px; text-align: center;}
+            #menu00 a {background: url('images/menu_btn_00.png') no-repeat; background-size: contain;}
+            #menu01 a {background: url('images/menu_btn_01.png') no-repeat; background-size: contain;}
+            #menu02 a {background: url('images/menu_btn_02.png') no-repeat; background-size: contain;}
+            #menu03 a {background: url('images/menu_btn_03.png') no-repeat; background-size: contain;}
+            /* menu page buttons */
+            .menuPageButton {position: absolute; width: 60px; height: 60px; border: none; background: none; cursor: pointer;}
+            #menuPageButtonBack {top: 240px; left: 110px; background: url('images/menu_btn_pb.png') no-repeat; background-size: contain;}
+            #menuPageButtonNext {top: 240px; right: 250px; background: url('images/menu_btn_pn.png') no-repeat; background-size: contain;}
+        </style>
+        <script src="js/main.js"></script>
+        <script src="js/menu.js"></script>
+        <script>
+            $(document).ready(function(){
+                var aiknn = new AiKnn;
+                window['aiknn'] = aiknn;
+                var menu = new Menu;
+            });
+        </script>
+        <title>智慧島</title>
+    </head>
+    <body>
+        <div id="content"></div>
+    </body>
+</html>
