@@ -117,7 +117,7 @@ class GameUI {
   async addObj(obj) {
     var self = this;
 
-    function Field(img) {
+    function monitorImgField(img) {
       var _url = img.url;
       img.__defineGetter__("url", function () {
         return _url;
@@ -136,11 +136,40 @@ class GameUI {
         });
       });
     }
-    Field(obj.img);
+    function monitorLabelField(label) {
+      var _text = label.text;
+      label.__defineGetter__("text", function () {
+        return _text;
+      });
+      label.__defineSetter__("text", async function (text) {
+        obj.divEle = document.createElement("div");
+        obj.divEle.innerHTML = text;
+        obj.divEle.style.position = 'absolute';
+        obj.divEle.style.cursor = 'pointer';
+        for (var key in obj.label.style) {
+          var val = obj.label.style[key];
+          obj.divEle.style[key] = val;
+        }
+        var cl = self.canvas.offsetLeft;
+        obj.divEle.style.top = (self.ch - obj.y * self.zoomY) + "px";
+        obj.divEle.style.left = (obj.x * self.zoomX) + "px";
+        obj.divEle.addEventListener("click", function (evt) {
+          obj.pixelX = obj.x * self.zoomX;
+          obj.pixelY = self.ch - obj.y * self.zoomY;
+          self.clickEvent(evt, obj);
+        });
+        self.canvas.parentNode.appendChild(obj.divEle);
+      });
+      label.text = _text;
+    }
+    if ('img' in obj){
+      monitorImgField(obj.img);
+    }
+    if ('label' in obj) {
+      monitorLabelField(obj.label);
+    }
     obj.kx = obj.x;
     obj.ky = obj.y;
-    //obj.x = obj.x * this.zoomX;
-    //obj.y = obj.y * this.zoomY;
     obj.img.url = obj.img.url;
     obj.serial = GameUI.serial++;
     this.knn.remove(obj);
@@ -195,10 +224,10 @@ class GameUI {
   }
 
   drawArrowTo(objA, objB, aWidth, color) {
-    this.drawLineWithArrows(objA,objB, aWidth, 10, false, true, color);
+    this.drawLineWithArrows(objA, objB, aWidth, 10, false, true, color);
   }
 
-  drawLineWithArrows(objA,objB, aWidth, aLength, arrowStart, arrowEnd, color) {
+  drawLineWithArrows(objA, objB, aWidth, aLength, arrowStart, arrowEnd, color) {
     var ctx = this.ctx;
     var bakStrokeStyle = ctx.strokeStyle;
     var bakLineWidth = ctx.lineWidth;
@@ -211,8 +240,8 @@ class GameUI {
     var dx = x1 - x0;
     var dy = y0 - y1;
     var angle = Math.atan2(dy, dx);
-    var length = Math.sqrt(dx * dx + dy * dy)-objA.img.width/2;
-    ctx.translate(x0-objA.img.width, this.ch - y0+objA.img.height);
+    var length = Math.sqrt(dx * dx + dy * dy) - objA.img.width / 2;
+    ctx.translate(x0 - objA.img.width, this.ch - y0 + objA.img.height);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);
