@@ -7,7 +7,6 @@ class GameUI {
 
   setConfig(cfg) {
     this.config = {};
-    this.config.zoom = cfg.zoom != undefined ? cfg.zoom : 50;
     this.config.canvasId = cfg.canvasId;
     this.config.strokeStyle = cfg.strokeStyle != undefined ? cfg.strokeStyle : "#cecece";
     this.config.grid = cfg.grid != undefined ? cfg.grid : true;
@@ -16,8 +15,8 @@ class GameUI {
     this.config.lineWidth = cfg.lineWidth != undefined ? cfg.lineWidth : 2;
     this.config.kVal = cfg.kVal != undefined ? cfg.kVal : 3;
     this.config.dVal = cfg.dVal != undefined ? cfg.dVal : 3;
-    this.clickEvent = cfg.clickEvent != undefined ? cfg.clickEvent : function (evt, obj) { };
-    this.initEvent = cfg.initEvent != undefined ? cfg.initEvent : function (obj) { };
+    this.clickEvent = cfg.clickEvent != undefined ? cfg.clickEvent : function (evt, obj) {};
+    this.initEvent = cfg.initEvent != undefined ? cfg.initEvent : function (obj) {};
   }
 
   constructor(config) {
@@ -25,7 +24,6 @@ class GameUI {
     GameUI.serial = 1;
     this.objs = [];
     this.rate = 10.0;
-    this.zoom = this.config.zoom;
     this.canvas = document.getElementById(this.config.canvasId);
     this.setKnn();
     this.ctx = this.canvas.getContext("2d");
@@ -61,7 +59,7 @@ class GameUI {
   }
 
   setKnn() {
-    this.knn = new KNN(this.zoom, this.rate);
+    this.knn = new KNN(0 /* no use*/ , this.rate);
   }
 
   /**
@@ -127,8 +125,8 @@ class GameUI {
         obj.imgEle = await self.loadImage(url, obj.img.width, obj.img.height);
         obj.imgEle.style.cursor = 'pointer';
         var cl = self.canvas.offsetLeft;
-        obj.imgEle.style.top = (self.ch - obj.y * self.zoomY + obj.img.height / 2) + "px";
-        obj.imgEle.style.left = (obj.x * self.zoomX - obj.img.width / 2) + "px";
+        obj.imgEle.style.top = (self.ch - obj.y * self.zoomY - obj.img.height / 2) + "px";
+        obj.imgEle.style.left = (cl + obj.x * self.zoomX - obj.img.width / 2) + "px";
         obj.imgEle.addEventListener("click", function (evt) {
           obj.pixelX = obj.x * self.zoomX;
           obj.pixelY = self.ch - obj.y * self.zoomY;
@@ -136,6 +134,7 @@ class GameUI {
         });
       });
     }
+
     function monitorLabelField(label) {
       var _text = label.text;
       label.__defineGetter__("text", function () {
@@ -162,7 +161,7 @@ class GameUI {
       });
       label.text = _text;
     }
-    if ('img' in obj){
+    if ('img' in obj) {
       monitorImgField(obj.img);
     }
     if ('label' in obj) {
@@ -195,19 +194,24 @@ class GameUI {
   }
 
   drawRange(obj, color, lineWidth) {
+    var calX = obj.x * this.zoomX ;
+    var calY = this.ch - obj.y * this.zoomY ;
+
     var bakStrole = this.ctx.strokeStyle;
     var bakLineWidth = this.ctx.lineWidth;
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
-    this.ctx.arc(obj.x, obj.y, this.config.zoom * this.config.dVal, 0, 2 * Math.PI);
+    var arcX = obj.x * this.zoomX;
+    var arcY = this.ch - obj.y * this.zoomY;
+    this.ctx.arc(arcX, arcY, this.zoomX * this.config.dVal, 0, 2 * Math.PI);
     this.ctx.stroke();
     this.ctx.strokeStyle = bakStrole;
     this.ctx.lineWidth = bakLineWidth;
   }
 
   showNearest(obj) {
-    var data = this.knn.nearest.call(this.knn, obj.kx, obj.ky, this.config.kVal, this.config.dVal + 0.001 /*fix js float*/);
+    var data = this.knn.nearest.call(this.knn, obj.kx, obj.ky, this.config.kVal, this.config.dVal + 0.001 /*fix js float*/ );
     var objs = [];
     for (var i = 0; i < data.length; i++) {
       if (data[i][0] != obj)
@@ -240,8 +244,10 @@ class GameUI {
     var dx = x1 - x0;
     var dy = y0 - y1;
     var angle = Math.atan2(dy, dx);
-    var length = Math.sqrt(dx * dx + dy * dy) - objA.img.width / 2;
-    ctx.translate(x0 - objA.img.width, this.ch - y0 + objA.img.height);
+    var length = Math.sqrt(dx * dx + dy * dy) - objA.img.width;
+    var calX = objA.x * this.zoomX ;
+    var calY = this.ch - objA.y * this.zoomY ;
+    ctx.translate(calX,calY);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);

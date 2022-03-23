@@ -10,9 +10,10 @@
             var imgURL = 'https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg';
             var ga = new GameUI({
                 'canvasId': 'myCanvas',
-                'grid':false,
+                'grid':true,
                 'backgroundImageURL': imgURL
             });
+            
             await ga.init();
             var obj = {
                 x: 5, y: 5,
@@ -25,7 +26,7 @@
             var obj2 = ga.cloneObj(obj,7,3);
             await ga.addObj(obj2);
             ga.setKVal(2).setDVal(3);
-            ga.drawArrow(obj, color = '#fe6699', lineWidth = 3);
+            ga.drawArrowTo(obj, obj2, lineWidth = 3,color = '#fe6699');
         })()
     </script>
 </body>

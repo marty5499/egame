@@ -10,9 +10,10 @@
             var imgURL = 'https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg';
             var ga = new GameUI({
                 'canvasId': 'myCanvas',
-                'grid':false,
+                'grid':true,
                 'backgroundImageURL': imgURL
             });
+            
             await ga.init();
             var obj = {
                 x: 3, y: 3,
