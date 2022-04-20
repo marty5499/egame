@@ -194,20 +194,43 @@ class GameUI {
   }
 
   drawRange(obj, color, lineWidth) {
-    var calX = obj.x * this.zoomX ;
-    var calY = this.ch - obj.y * this.zoomY ;
+    var calX = obj.x * this.zoomX;
+    var calY = this.ch - obj.y * this.zoomY;
 
     var bakStrole = this.ctx.strokeStyle;
     var bakLineWidth = this.ctx.lineWidth;
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
-    var arcX = obj.x * this.zoomX;
-    var arcY = this.ch - obj.y * this.zoomY;
-    this.ctx.arc(arcX, arcY, this.zoomX * this.config.dVal, 0, 2 * Math.PI);
-    this.ctx.stroke();
+    var arcX = obj.x * this.zoomX - this.zoomX * this.config.dVal;
+    var arcY = this.ch - obj.y * this.zoomY - this.zoomY * this.config.dVal;
+    var distX = this.zoomX * this.config.dVal * 2;
+    var distY = this.zoomY * this.config.dVal * 2;
+    this.drawEllipseWithBezier(this.ctx, arcX, arcY, distX, distY, color);
     this.ctx.strokeStyle = bakStrole;
     this.ctx.lineWidth = bakLineWidth;
+  }
+
+  drawEllipseWithBezier(ctx, x, y, w, h, style) {
+    var kappa = .5522848,
+      ox = (w / 2) * kappa, // control point offset horizontal
+      oy = (h / 2) * kappa, // control point offset vertical
+      xe = x + w, // x-end
+      ye = y + h, // y-end
+      xm = x + w / 2, // x-middle
+      ym = y + h / 2; // y-middle
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, ym);
+    ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    if (style)
+      ctx.strokeStyle = style;
+    ctx.stroke();
+    ctx.restore();
   }
 
   showNearest(obj) {
@@ -245,9 +268,9 @@ class GameUI {
     var dy = y0 - y1;
     var angle = Math.atan2(dy, dx);
     var length = Math.sqrt(dx * dx + dy * dy) - objA.img.width;
-    var calX = objA.x * this.zoomX ;
-    var calY = this.ch - objA.y * this.zoomY ;
-    ctx.translate(calX,calY);
+    var calX = objA.x * this.zoomX;
+    var calY = this.ch - objA.y * this.zoomY;
+    ctx.translate(calX, calY);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.moveTo(0, 0);

@@ -26,6 +26,10 @@
             await ga.addObj(ga.cloneObj(obj,5,5));
             ga.setKVal(1).setDVal(2);
             ga.drawRange(obj, color = '#fe2233', lineWidth = 5);
+            await ga.refresh();
+            ga.setKVal(1).setDVal(3);
+            ga.drawRange(obj, color = '#fef233', lineWidth = 2);
+            window.ga = ga;
         })()
     </script>
 </body>
